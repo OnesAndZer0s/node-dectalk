@@ -1,0 +1,130 @@
+# Makefile for samplosf/src/dtsamples/ for Dectalk software for @target@ 
+#
+# 001 ETT 10/22/1998 moved to autoconf system. 
+# 002 ETT 12/04/1998 changed dtsample_dtlib to be 
+#					 used in all samples as sample_dtlib
+# 003 MGS 06/19/2001 Solaris Port BATS#972
+#
+
+#### Start of system configuration section. ####  
+
+# Get the Operating System version
+OS_VERSION=@OS_VERSION@
+# where is the standard include dir? (cross compile critical)
+STD_INCLUDE=@STD_INCLUDE@
+# which compiler do we use?
+CC=@CC@
+RANLIB=@RANLIB@
+# support for symbolic links?
+LN_S=@LN_S@
+# to debug or not to debug?
+DEBUG_FLAGS=@DEBUG_FLAGS@
+# how much optomization do we use?
+OPTO_FLAGS=@OPTO_FLAGS@
+# how many silly compile warnings do we want?
+WARN_FLAGS=@WARN_FLAGS@
+OS_VERSION=@OS_VERSION@
+DTSAMPLE_ALL=@DTSAMPLE_ALL@
+DT_LIB=@SAMPLE_DTLIB@
+LIBS=@LIBS@
+DEFINES=@DEFINES@
+MMELIBS=@MMELIBS@
+LINKFLAGS=@SAMPLE_LINKFLAGS@
+AUDIO_LIBS=@AUDIO_LIBS@
+AUDIO_DEFINES=@AUDIO_DEFINES@
+ICONV_LIBS=@ICONV_LIBS@
+#### End of system configuration section. #### 
+
+RM=rm -f
+
+INLCUDE_DIR=../../../dapi/src/include
+API_DIR=    ../../../dapi/src/api
+PH_DIR=     ../../../dapi/src/ph
+NT_DIR=     ../../../dapi/src/nt
+VTM_DIR=    ../../../dapi/src/vtm
+DECTALKF_DIR = ../../../
+HARDWARE_CONSOLE_DIR = ../../../hardware/src/console/
+HARDWARE_MISC_DIR = ../../../hardware/src/misc/
+
+INCLUDES= -I$(STD_INCLUDE) -I$(STD_INCLUDE)/dtk -I$(DECTALKF_DIR) -I$(API_DIR) -I$(INLCUDE_DIR) -I$(NT_DIR) -I$(VTM_DIR) -I$(PH_DIR)
+
+#DEBUGFLAGS= -G3
+#OTHER_FLAGS=-threads 
+#LFLAGS=-G3 $(DEBUG_FLAGS)
+
+CFLAGS= -MMD $(DEBUG_FLAGS) $(OPTO_FLAGS) $(WARN_FLAGS) $(INCLUDES) $(DEFINES) $(AUDIO_DEFINES)
+#LINKFLAGS= -Bdynamic
+
+XLIBS= -lMrm -lXm -lXt -lXext -lX11
+MMELIBS= -lm
+#MMELIBS= -lmme -lc_r -lmach -lrt -llmf
+
+#DT_LIB=-lttsmme_$(LANG_CODE)
+
+SAMPLES_SRC=say.c dtmemory.c aclock.c xmsay.c tunecheck.c
+
+SAMPLES_OBJ=$(OUTPUT_DIR)/link/say.o $(OUTPUT_DIR)/link/dtmemory.o $(OUTPUT_DIR)/link/aclock.o $(OUTPUT_DIR)/link/xmsay.o $(OUTPUT_DIR)/link/tunecheck.o $(OUTPUT_DIR)/link/dump_vdf.o $(OUTPUT_DIR)/link/mfg_load.o
+
+all: $(DTSAMPLE_ALL)
+#$(OUTPUT_DIR)/say $(OUTPUT_DIR)/dtmemory \
+#     $(OUTPUT_DIR)/aclock $(OUTPUT_DIR)/xmsay $(OUTPUT_DIR)/xmsay.uid 
+
+$(OUTPUT_DIR)/link/say.o:say.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/link/dtmemory.o:dtmemory.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/link/aclock.o:aclock.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/say:$(OUTPUT_DIR)/link/say.o
+	$(CC) $(LINKFLAGS) -o $@ $< $(DT_LIB) $(LIBS) $(MMELIBS) $(ICONV_LIBS)
+
+$(OUTPUT_DIR)/link/tunecheck.o: tunecheck.c
+	$(CC) -c $(CFLAGS) -o $@ $< $(DT_LIB) $(LIBS) $(MMELIBS)
+
+$(OUTPUT_DIR)/tunecheck: $(OUTPUT_DIR)/link/tunecheck.o
+	$(CC) $(LINKFLAGS) -o $@ $< $(DT_LIB) $(LIBS) $(MMELIBS) -ltts_$(LANG_CODE)
+
+$(OUTPUT_DIR)/link/dump_vdf.o: dump_vdf.c
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/dump_vdf: $(OUTPUT_DIR)/link/dump_vdf.o
+	$(CC) $(LINKFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/link/mfg_load.o: mfg_load.c
+	$(CC) -c $(CFLAGS) -I$(HARDWARE_CONSOLE_DIR) -I$(HARDWARE_MISC_DIR) -o $@ $<
+
+$(OUTPUT_DIR)/mfg_load: $(OUTPUT_DIR)/link/mfg_load.o
+	$(CC) $(LINKFLAGS) -o $@ $<
+
+$(OUTPUT_DIR)/say_demo_$(LANG_CODE):$(OUTPUT_DIR)/link/say.o
+	$(CC) $(LINKFLAGS) -o $@ $< -ltts_demo_$(LANG_CODE) $(LIBS) $(MMELIBS) $(AUDIO_LIBS) $(ICONV_LIBS)
+
+$(OUTPUT_DIR)/dtmemory:$(OUTPUT_DIR)/link/dtmemory.o
+	$(CC) $(LINKFLAGS) -o $@ $< $(DT_LIB) $(LIBS) $(MMELIBS)
+
+$(OUTPUT_DIR)/dtmemory_demo_$(LANG_CODE):$(OUTPUT_DIR)/link/dtmemory.o
+	$(CC) $(LINKFLAGS) -o $@ $< -ltts_demo_$(LANG_CODE) $(LIBS) $(MMELIBS) $(AUDIO_LIBS) $(ICONV_LIBS)
+
+$(OUTPUT_DIR)/aclock:$(OUTPUT_DIR)/link/aclock.o
+	$(CC) $(LINKFLAGS) -o $@ $< $(DT_LIB) $(LIBS) $(MMELIBS)
+
+$(OUTPUT_DIR)/xmsay.uid:xmsay.uil 
+	/usr/bin/X11/uil -o $@ $<
+
+$(OUTPUT_DIR)/xmsay:$(OUTPUT_DIR)/link/xmsay.o
+	$(CC) $(LINKFLAGS) -o $@ $< $(DT_LIB) $(LIBS) $(XLIBS) $(MMELIBS)
+
+.c.o:
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+DEPEND:=$(SAMPLES_OBJ:.o=.d)
+-include $(DEPEND)
+
+clean:
+	$(RM) $(SAMPLES_OBJ)
+	$(RM) -r $(OUTPUT_DIR)/link
+	$(RM) $(OUTPUT_DIR)/* 
+	$(RM) *~ core

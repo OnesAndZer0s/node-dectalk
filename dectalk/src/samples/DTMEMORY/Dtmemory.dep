@@ -1,0 +1,11 @@
+# Microsoft Developer Studio Generated Dependency File, included by Dtmemory.mak
+
+.\dtmemory.c : \
+	"..\..\dapi\src\api\ttsapi.h"\
+	".\dtmemory.h"\
+	
+
+.\dtmemory.rc : \
+	".\dtmemory.h"\
+	".\dtmemory.ico"\
+	
