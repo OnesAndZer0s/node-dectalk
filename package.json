@@ -1,0 +1,40 @@
+{
+  "name": "fonixtalk",
+  "version": "0.0.9",
+  "description": "NodeJS bindings for the FonixTalk TTS Engine",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OnesAndZer0s/fonixtalk.git"
+  },
+  "keywords": [
+    "dectalk",
+    "fonixtalk",
+    "tts",
+    "text to speech",
+    "aeiou",
+    "speech synthesis"
+  ],
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "author": "OnesAndZer0s",
+  "license": "GNU",
+  "dependencies": {
+    "bindings": "~1.2.1",
+    "node-addon-api": "latest"
+  },
+  "scripts": {
+    "start": "ts-node test.ts",
+    "build:dev": "cmake-js -j 16 build -D",
+    "build:ts": "tsc",
+    "build": "cmake-js -j 16 build",
+    "rebuild:dev": "cmake-js -j 16 rebuild -D",
+    "rebuild": "cmake-js -j 16 rebuild",
+    "clean": "cmake-js clean",
+    "docgen" : "typedoc src/index.ts --out docs"
+  },
+  "devDependencies": {
+    "@types/bindings": "^1.5.1",
+    "@types/node": "^20.4.2",
+    "typedoc": "^0.24.8"
+  }
+}
