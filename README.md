@@ -1,13 +1,13 @@
-# `fonixtalk` - Node.js bindings for the FonixTalk TTS Engine
-[![npm version](https://badge.fury.io/js/fonixtalk.svg)](https://badge.fury.io/js/fonixtalk) [![License: GNU](https://img.shields.io/badge/License-GNU-blue.svg)](https://opensource.org/licenses/GNU)
+# `node-dectalk` - Node.js bindings for the DecTalk TTS Engine
+[![npm version](https://badge.fury.io/js/node-dectalk.svg)](https://badge.fury.io/js/node-dectalk) [![License: GNU](https://img.shields.io/badge/License-GNU-blue.svg)](https://opensource.org/licenses/GNU)
 
-`fonixtalk` is a Node.js module that provides bindings for the FonixTalk library. Aeiou.
+`node-dectalk` is a Node.js module that provides bindings for the DecTalk library. Aeiou.
 
 ## Installation
-You can install `fonixtalk` via npm:
+You can install `node-dectalk` via npm:
 
 ```bash
-npm install fonixtalk
+npm install node-dectalk
 ```
 ## Usage
 ```javascript
@@ -15,7 +15,10 @@ npm install fonixtalk
 ```
 ## Documentation
 
-https://onesandzer0s.github.io/fonixtalk/
+https://onesandzer0s.github.io/node-dectalk/
+
+## Resources
+- [Old DecTalk Source Code](https://github.com/dectalk/dectalk/)
 
 ## TODO
 - [ ] Add documentation.
