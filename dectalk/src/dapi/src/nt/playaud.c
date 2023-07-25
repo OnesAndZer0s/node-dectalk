@@ -236,7 +236,7 @@ static unsigned int timeGetTime()
 #include "cemm.h"
 #endif //UNDER_CE
 
-#if defined __linux__ || defined VXWORKS || defined _SPARC_SOLARIS_  || defined (__APPLE__)
+#if defined __linux__ || defined VXWORKS || defined _SPARC_SOLARIS_ || defined __EMSCRIPTEN__ || defined (__APPLE__)
 //  linux home brew audio API
 #include "linux_audio.h"
 LONG OSS_WaveInit(void);
@@ -246,7 +246,7 @@ FILE *fpODS_File;
 #endif
 
 #if defined __EMSCRIPTEN__
-#include "disable_audio.h"
+#include "disable_audio.h";
 #endif
 
 #include "tts.h"
@@ -293,7 +293,7 @@ typedef  unsigned int  SENDRET_T;
 #else
 #define  STARTUP_BUFFER_SECONDS	        0.5 
 #endif
-#elif defined __arm__
+#elif defined __arm__OLD
 #ifdef __ipaq__
 #define  STARTUP_BUFFER_SECONDS         0.5
 #else
@@ -319,7 +319,7 @@ typedef  unsigned int  SENDRET_T;
            ( MAXIMUM_WRITE_LENGTH * ( MAXIMUM_BUFFERS_QUEUED + 1 ))
 #endif
 #endif
-#ifdef __arm__
+#ifdef __arm__OLD
 #ifdef __ipaq__
 #define  MINIMUM_STARTUP_WRITE_SIZE     3072
 #else //__ipaq__
@@ -772,7 +772,7 @@ MMRESULT PA_CreatePlayHandleEx( HPLAY_AUDIO_T * ppPlayAudio,
 
   pShm_t->uiGlobalPlayAudioInstance++;
 
-#if defined __linux__ || defined VXWORKS || defined _SPARC_SOLARIS_ || defined (__APPLE__)
+#if defined __linux__ || defined VXWORKS || defined _SPARC_SOLARIS_ || defined __EMSCRIPTEN__ || defined (__APPLE__)
   OSS_WaveInit();
 #endif
 
@@ -1408,9 +1408,7 @@ MMRESULT PA_CreatePlayHandleEx( HPLAY_AUDIO_T * ppPlayAudio,
       return MMSYSERR_ERROR;
     }
 
-#ifndef SINGLE_THREADED
     OP_SetThreadPriority( pShm_t->hGlobalPlayAudioThread, OP_PRIORITY_HIGHEST );
-#endif
 
 #ifdef USE_MME_SERVER
 
@@ -4933,9 +4931,8 @@ static ATYPE_T Process_MM_WOM_DONE_Message( HPLAY_AUDIO_T pPlayAudio,
 
   uiOldWriteLength = (unsigned int)pWaveHdr->dwUser;
 
-#ifdef __arm__
+#ifdef __arm__OLD
 #ifndef __ipaq__
-#ifndef SINGLE_THREADED
   if( pPlayAudio->bPipesNotEmpty )
     {
       //setpriority(PRIO_PROCESS, 0, 20);
@@ -4949,9 +4946,8 @@ static ATYPE_T Process_MM_WOM_DONE_Message( HPLAY_AUDIO_T pPlayAudio,
       //setpriority(PRIO_PROCESS, 0, -20);
       OP_SetThreadPriority( pShm_t->hGlobalPlayAudioThread, OP_PRIORITY_HIGHEST );
     }
-#endif
 #endif //__ipaq__
-#endif //__arm__
+#endif //__arm__OLD
 
   /********************************************************************/
   /*  Unprepare the old header.                                       */

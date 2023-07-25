@@ -10,16 +10,17 @@ project (node-dectalk)
 include_directories(${CMAKE_JS_INC})
 include_directories(${CMAKE_SOURCE_DIR})
 
-add_subdirectory(dectalk/src/dapi/src)
-
-
-# find_library(dectalk PATHS "/lib/dectalk/")
-
-
 file(GLOB_RECURSE SOURCE_FILES "src/index.cc")
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} dectalk)
+
+add_library(tts SHARED IMPORTED) # or STATIC instead of SHARED
+set_target_properties(tts PROPERTIES
+  IMPORTED_LOCATION "/opt/dectalk/lib/libtts.so"
+  INTERFACE_INCLUDE_DIRECTORIES "/opt/dectalk/include/dtk"
+)
+
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} tts)
 
 
 set(CMAKE_CONFIGURATION_TYPES "Debug" CACHE STRING "" FORCE)
@@ -34,7 +35,9 @@ string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
-target_include_directories(${PROJECT_NAME} PRIVATE "/dectalk/src/dapi/src/")
+target_include_directories(${PROJECT_NAME} PRIVATE "/dectalk/dist/include")
+
+
 
 # define NAPI_VERSION
 add_definitions(-DNAPI_VERSION=7)

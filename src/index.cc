@@ -1,10 +1,12 @@
 // #include <dtk/ttsapi.h>
-#include "build/headers/dtk/dtmmedefs.h"
-#include "build/headers/dtk/ttsapi.h"
-#include "dectalk/src/dapi/src/api/epsonapi.h"
-#include "dectalk/src/dapi/src/api/ttsapi.h"
+// #include "build/headers/dtk/dtmmedefs.h"
+// #include "build/headers/dtk/ttsapi.h"
+// #include "dectalk/src/dapi/src/api/epsonapi.h"
+// #include "dectalk/src/dapi/src/api/ttsapi.h"
 // #include "dectalk/src/dapi/src/cmd/c.h"
 // #include "lib/dectalk/dapi/src/api/epsonapi.h"
+
+#include "dectalk/dist/include/dtk/ttsapi.h"
 
 #include <napi.h>
 #include <stdio.h>

@@ -200,7 +200,7 @@ iconv_t cd;
 MMRESULT OpenOutputWaveFile( char * fname, int encoding );
 MMRESULT CloseOutputWaveFile( );
 #if defined __linux__ || defined _SPARC_SOLARIS_ || defined __EMSCRIPTEN__ || defined (__APPLE__)
-int play_file( char *file_name, int isAPipe );
+int play_file( char *file_name, int isAPipe, int clauseMode );
 #endif
 #ifdef HAVE_ICONV
 char *convert_string_for_dapi(char *in, size_t inlen);
@@ -267,7 +267,25 @@ static void usage(char *progname)
     fprintf(stderr,"                     \"The End\".\n" );
     fprintf(stderr,"                     The \"normal\" input is \"forced\" out before the postfix\n" );
     fprintf(stderr,"                     text is read.\n" );
-    fprintf(stderr,"          -          Read from stdin in line-mode (non-typing)\n");
+    fprintf(stderr,"          -c         Switch to clause-mode from line-mode (for stdin - and -fi)\n");
+    fprintf(stderr,"          -          Read from stdin in line- or clause-mode (non-typing)\n\n");
+    fprintf(stderr,"Modes:\n");
+    fprintf(stderr," * typing: Fast pronounciation of single letters on a line.\n");
+    fprintf(stderr,"           Playing output is aborted when a new input-line is sent.\n");
+    fprintf(stderr," * line:   Output is produced/queued after each newline.\n");
+    fprintf(stderr,"           Playing output continues.\n");
+    fprintf(stderr," * clause: Output is produced/queued on clause end (with delimiters like\n");
+    fprintf(stderr,"           period (.) or comma (,)) or when the force-character ^K is\n");
+    fprintf(stderr,"           received.\n");
+    fprintf(stderr,"           Playing output continues. Output is always produced on EOF.\n\n");
+    fprintf(stderr,"Input/mode switch table:\n");
+    fprintf(stderr,"       | typing | line | clause\n");
+    fprintf(stderr," ------+--------+------+-------\n");
+    fprintf(stderr," stdin |        | -    | -c -\n");
+    fprintf(stderr," ------+--------+------+-------\n");
+    fprintf(stderr," file  | N/A    | -fi  | -c -fi\n");
+    fprintf(stderr," ------+--------+------+-------\n");
+    fprintf(stderr," cli   | N/A    | N/A  | -a\n\n");
     exit(-1);
 }
 
@@ -313,6 +331,7 @@ int main( int argc, char *argv[] )
     int i; 
     unsigned int file_arg_index; 
     int isAPipe = FALSE;
+    int clauseMode = FALSE;
     int cli_len;
     int text_len;
     int status;
@@ -533,6 +552,14 @@ int main( int argc, char *argv[] )
 	}
 
         /************************************************/
+        /* Clause mode					*/
+        /************************************************/
+	else if ( strcmp("-c",argv[i]) == 0 )
+	{
+	    clauseMode = TRUE;
+	}
+
+        /************************************************/
         /* Usage error - check for -h                   */
         /************************************************/
 	else if ( strcmp("-h",argv[i]) == 0 )
@@ -691,7 +718,7 @@ int main( int argc, char *argv[] )
        /**********************************************/
        /* Play from stdin         		     */
        /**********************************************/
-       play_file( "", isAPipe );
+       play_file( "", isAPipe, clauseMode );
     }
 
     else if ( file_arg_index == (-1) && cli_len == 0 )
@@ -796,7 +823,7 @@ int main( int argc, char *argv[] )
           /* Play the specified file 			*/
           /**********************************************/
 #if defined __linux__ || defined VXWORKS || defined _SPARC_SOLARIS_ || defined __EMSCRIPTEN__ || defined (__APPLE__)
-	  play_file( argv[file_arg_index], 0 );
+	  play_file( argv[file_arg_index], 0, clauseMode );
 #else
 	  play_file( argv[file_arg_index] );
 #endif
@@ -860,7 +887,7 @@ int main( int argc, char *argv[] )
 **   int - Total number of bytes of text played back.
 **
 *****************************************************************************/
-int play_file( char *file_name, int isAPipe )
+int play_file( char *file_name, int isAPipe, int clauseMode )
 {
     FILE *fileHandle;
     int  nbytes;
@@ -868,10 +895,13 @@ int play_file( char *file_name, int isAPipe )
     char *buf;
     int buf_len = 0;
     int  text_len;
-	int value;
-    DWORD dwFlags = TTS_FORCE;
+    int value;
+    DWORD dwFlags = 0;
     char *play_buf;
 
+    if (!clauseMode) {
+        dwFlags = TTS_FORCE;
+    }
     buf = malloc(REALLOC_SIZE*sizeof(char));
     if (buf == NULL) {
 	    fprintf(stderr, "Can't allocate memory!\n");

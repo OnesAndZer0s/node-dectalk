@@ -90,12 +90,7 @@ AC_SUBST(OS_VERSION)dnl
 dnl don't put a slash on the end of this dir.  
 dnl it shouldn't matter but why chance it?
 BUILD_DIR="${PWD}/dapi/build"
-
-dnl Escape any spaces in the filename with backslashes.
-dnl Thanks Microsoft Windows for adding a space to my name.
-BUILD_DIR=$( echo "$BUILD_DIR" | sed 's/ /\\ /g' )
-
-AC_SUBST(BUILD_DIR)
+AC_SUBST(BUILD_DIR)dnl
 
 dnl Set a configuration headers file
 AC_CONFIG_HEADERS([config.h])
@@ -417,8 +412,8 @@ DAPI_LD_SHARED="\$(LD) -shared -update_registry \
 	./so_locations -hidden \
 	-soname libtts_\$(LANG_CODE).so -o \$@ \$(DECTALK_TTS_OBJS) \$(LIBS)"
 case "$target" in
-	*-*-linux-*) DAPI_LD_SHARED="\$(LD) -shared -Bsymbolic -soname \
-		libtts_\$(LANG_CODE).so -o \$@ \$(DECTALK_TTS_OBJS) \$(LIBS) -lm" ;;
+	*-*-linux-*) DAPI_LD_SHARED="\$(CC) -shared -Wl,-Bsymbolic \
+		-Wl,-soname,libtts_\$(LANG_CODE).so -o \$@ \$(DECTALK_TTS_OBJS) \$(LIBS) -lm" ;;
 	powerpc-apple-*) DAPI_LD_SHARED="\$(CC) -dynamic -dynamiclib -dylib \
 		-o \$@ \$(DECTALK_TTS_OBJS) \$(LIBS)" ;;
 	sparc-sun-*) DAPI_LD_SHARED="\$(LD) -G -Bsymbolic \
@@ -441,10 +436,10 @@ esac
 AC_SUBST(ML_SONAME)dnl
 
 dnl: see how simple this is for linux?
-ML_TTS_SO="\$(LD) -shared -Bsymbolic -soname libtts.so \
+ML_TTS_SO="\$(CC) -shared -Wl,-Bsymbolic -Wl,-soname,libtts.so \
 	-o \$@ ../build/\$(OS_VERSION)/\$(LANG_CODE)/\$(ML_OUT)/link/dtalk_ml.o \
 	../build/\$(OS_VERSION)/\$(LANG_CODE)/\$(ML_OUT)/link/init.o \
-	../build/\$(OS_VERSION)/\$(LANG_CODE)/\$(ML_OUT)/libtts.a  -ldl -lpthread -lc --rpath=\\\$\$ORIGIN/ --rpath=\\\$\$ORIGIN/../lib/ -lm"
+	../build/\$(OS_VERSION)/\$(LANG_CODE)/\$(ML_OUT)/libtts.a  -ldl -lpthread -lc -Wl,--rpath,\\\$\$ORIGIN/ -Wl,--rpath,\\\$\$ORIGIN/../lib/ -lm"
 case "$target" in
 	alpha-dec-osf4.0) ML_TTS_SO="\$(LD) \$(LD_FLAGS) -shared -update_registry ./so_locations \
 		-soname libtts.so -o \$@ ../build/\$(OS_VERSION)/\$(LANG_CODE)/\$(ML_OUT)/link/dtalk_ml.o \

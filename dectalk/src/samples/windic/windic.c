@@ -3,8 +3,8 @@
 /*  COPYRIGHT NOTICE                                                  */
 /*                                                                    */
 /*  Copyright (c) Digital Equipment Corporation, 1993 - 1998          */
-/*  ï¿½ SMART Modular Technologies 1999. All rights reserved.		  	  */
-/*  Copyright ï¿½ 2000-2001 Force Computers, Inc., a Solectron company. All rights reserved. */
+/*  © SMART Modular Technologies 1999. All rights reserved.		  	  */
+/*  Copyright © 2000-2001 Force Computers, Inc., a Solectron company. All rights reserved. */
 /*																	  */
 /*  All Rights reserved. Unpublished rights reserved under the        */
 /*  copyright laws of the United States. Copyright is claimed in      */
@@ -97,13 +97,12 @@
 #define awHeight 60 + pHeight + border * 2  + etHeight
 
 #define FILESIZE 256
-#define GWL_HINSTANCE	(-6)
 
 /**********************************************************************/
 /*  Global variables.                                                 */
 /**********************************************************************/
 
-LPCTSTR *szAppName = TEXT("DECtalk Dictionary Editor");
+char        *szAppName = "windic";
 HANDLE hInst;
 LPTTS_HANDLE_T phTTS[10];
 int tts_cur,tts_us,tts_uk,tts_gr,tts_sp,tts_la,tts_fr;
@@ -309,7 +308,7 @@ static  LPFINDREPLACE lpfrText;
 		SetApplicationParameters( hWnd, szFile );
 
 		if( TextToSpeechShutdown( phTTS[tts_cur] ) )
-		    MessageBox( hWnd, TEXT("Error Shutting down TTS"), TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+		    MessageBox( hWnd, "Error Shutting down TTS", "ERROR", MB_OK | MB_ICONSTOP );
 
 #ifndef WINDIC_C_STATIC
 		if (us_on)	mmStatus = TextToSpeechCloseLang("US");
@@ -337,12 +336,12 @@ static  LPFINDREPLACE lpfrText;
 		break ;
 
 	case WM_CREATE:
-		uiID_Error_Msg = RegisterWindowMessage( TEXT("DECtalkErrorMessage") );
-		uiMessage_Find_Replace = RegisterWindowMessage( TEXT("commdlg_FindReplace") );
+		uiID_Error_Msg = RegisterWindowMessage( "DECtalkErrorMessage" );
+		uiMessage_Find_Replace = RegisterWindowMessage( "commdlg_FindReplace" );
 		GetClientRect( hWnd, &lprc );
 		hEdit = CreateWindow(
-				TEXT("EDIT"),         /* See RegisterClass() call.    */
-				TEXT(""),             /* Text for window title bar.   */
+				"EDIT",         /* See RegisterClass() call.    */
+				"",             /* Text for window title bar.   */
 				WS_CHILD |WS_VISIBLE | WS_VSCROLL | ES_NOHIDESEL | WS_HSCROLL |
 				WS_BORDER | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL,
 						/* Window Style.                */
@@ -356,7 +355,7 @@ static  LPFINDREPLACE lpfrText;
 				NULL) ;
 		SendMessage( hEdit, EM_LIMITTEXT, (WPARAM)0, (LPARAM)0 );
 
-		hPlay = CreateWindow(TEXT("BUTTON"), TEXT("Pronounce Word"),
+		hPlay = CreateWindow("BUTTON", "Pronounce Word",
 			       WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 			       border,                  // Vertical Position
 			       0L,                      // Horizontal Position
@@ -368,8 +367,8 @@ static  LPFINDREPLACE lpfrText;
 			       NULL);
 
 		hPrev = CreateWindow (
-				TEXT("BUTTON"),              /* See RegisterClass() call.          */
-				TEXT("Previous"),            /* Text for window title bar.         */
+				"BUTTON",              /* See RegisterClass() call.          */
+				"Previous",            /* Text for window title bar.         */
 				WS_CHILD |WS_VISIBLE | BS_PUSHBUTTON,   /* Window style.                      */
 				border * 2 + pWidth,   /* Default horizontal position.       */
 				0L,                    /* Default vertical position.         */
@@ -380,7 +379,7 @@ static  LPFINDREPLACE lpfrText;
 				(HINSTANCE)GetWindowLong( hWnd, GWL_HINSTANCE ),   /* hInstance */
 				NULL);
 
-		hNext = CreateWindow(TEXT("BUTTON"), TEXT("Next"),
+		hNext = CreateWindow("BUTTON", "Next",
 			       WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
 			       2 * pWidth + border * 2,   /* Vertical Position   */
 			       0L,                        /* Horizontal Position */
@@ -444,7 +443,7 @@ static  LPFINDREPLACE lpfrText;
 
 		if(TextToSpeechEnumLangs(&languageINFO) == 0) 
 		{
-			MessageBox(NULL,TEXT("Unable to allocate Memory"),TEXT("Error"),MB_OK);
+			MessageBox(NULL,"Unable to allocate Memory","Error",MB_OK);
 			return(-1);
 		}
 	
@@ -562,22 +561,22 @@ static  LPFINDREPLACE lpfrText;
 
 		if (mmStatus == MMSYSERR_NODRIVER)
 		 {
-		   MessageBox( hWnd, TEXT("No wave device present \n You can continue but windic won't speak"),
-		   TEXT("Warning"), MB_OK );
+		   MessageBox( hWnd, "No wave device present \n You can continue but windic won't speak",
+		   "Warning", MB_OK );
 
 		mmStatus=TextToSpeechStartupEx(&phTTS[tts_cur], 0, DO_NOT_USE_AUDIO_DEVICE, TTSCallbackRoutine, 1);
 
 		   if ( mmStatus == MMSYSERR_ERROR)
 
 		     {
-		       MessageBox( hWnd, TEXT("Can't find DECtalk Dictionary \n dectalk.dic, Shutting down!"),
-		      TEXT("windic ERROR"), MB_OK );
+		       MessageBox( hWnd, "Can't find DECtalk Dictionary \n dectalk.dic, Shutting down!",
+		      "windic ERROR", MB_OK );
 		       DestroyWindow( hWnd );
 		       return FALSE;
 		     }
 		    if (mmStatus)
 		     {
-		       sprintf(szError, TEXT("Error Starting up TTS\n Error = %ld"), mmStatus );
+		       sprintf(szError, "Error Starting up TTS\n Error = %ld", mmStatus );
 		       MessageBox( hWnd, szError, "ERROR", MB_OK | MB_ICONSTOP );
 		       DestroyWindow( hWnd );
 		     }
@@ -586,8 +585,8 @@ static  LPFINDREPLACE lpfrText;
 			if (mmStatus)
 			 {
 			   MessageBox( hWnd,
-						   TEXT("There is an ERROR in Initializing the Text To Speech System.\n\nExiting Application."),
-						   TEXT("Windic cannot be started."), MB_OK | MB_ICONSTOP  );
+						   "There is an ERROR in Initializing the Text To Speech System.\n\nExiting Application.",
+						   "Windic cannot be started.", MB_OK | MB_ICONSTOP  );
 			   return( -1 );
 			 }
 		  }
@@ -617,7 +616,7 @@ static  LPFINDREPLACE lpfrText;
 					    // Yes or No pressed
 		DragQueryFile( (HANDLE) wParam, 0, szFile, sizeof( szFile ) );
 		if( TextToSpeechReset( phTTS[tts_cur], TRUE ))
-		    MessageBox( hWnd, TEXT("Error in TTS Reset"), TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+		    MessageBox( hWnd,"Error in TTS Reset", "ERROR", MB_OK | MB_ICONSTOP );
 
 		if( MyReadFile( hWnd, szFile ))
 		  {
@@ -673,8 +672,8 @@ static  LPFINDREPLACE lpfrText;
 		    lSelect = SendMessage( hEdit, EM_GETSEL, (WPARAM)&dwStart, (LPARAM)&dwEnd );
 		    if( HIWORD( lSelect ) == LOWORD( lSelect ))
 		      {
-			if( TextToSpeechSpeak( phTTS[tts_cur], TEXT("Nothing was selected."), TTS_FORCE ))
-			   MessageBox( hWnd, TEXT("Error in TTS Speak"), "ERROR", MB_OK | MB_ICONSTOP );
+			if( TextToSpeechSpeak( phTTS[tts_cur], "Nothing was selected.", TTS_FORCE ))
+			   MessageBox( hWnd, "Error in TTS Speak", "ERROR", MB_OK | MB_ICONSTOP );
 			break;
 		      }
 		    else
@@ -695,7 +694,7 @@ static  LPFINDREPLACE lpfrText;
 			 lpSelBuf[dwEnd - dwStart] = '\0';
 
 			 if( TextToSpeechSpeak( phTTS[tts_cur], lpSelBuf, TTS_FORCE ))
-			    MessageBox( hWnd, TEXT("Error in TTS Speak"), TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+			    MessageBox( hWnd, "Error in TTS Speak", "ERROR", MB_OK | MB_ICONSTOP );
 
 			 free( lpSelBuf );
 			 free( lpEditText );
@@ -708,29 +707,29 @@ static  LPFINDREPLACE lpfrText;
 		    switch (wParam)
 		      {
 		      case ERROR_IN_AUDIO_WRITE:
-		      MessageBox(hWnd, TEXT("Error in Writing Audio"), TEXT("Async Error"),MB_OK | MB_ICONSTOP);
+		      MessageBox(hWnd, "Error in Writing Audio", "Async Error",MB_OK | MB_ICONSTOP);
 		      break;
 
 		      case ERROR_OPENING_WAVE_OUTPUT_DEVICE:
 		      MessageBox(hWnd,
-		       TEXT("The wave device is in use by another application \n DECtalk will wait until the device is free."),
-		       TEXT("Warning"),MB_OK | MB_ICONSTOP);
+		       "The wave device is in use by another application \n DECtalk will wait until the device is free.",
+		       "Warning",MB_OK | MB_ICONSTOP);
 		      break;
 
 		      case ERROR_GETTING_DEVICE_CAPABILITIES:
-		      MessageBox(hWnd, TEXT("Error Getting Audio Device Caps"), TEXT("Async Error"),MB_OK | MB_ICONSTOP);
+		      MessageBox(hWnd, "Error Getting Audio Device Caps", "Async Error",MB_OK | MB_ICONSTOP);
 		      break;
 
 		      case ERROR_READING_DICTIONARY:
-		      MessageBox(hWnd, TEXT("Error Reading Dictionary File \n dectalk.dic"), TEXT("Async Error"),MB_OK | MB_ICONSTOP);
+		      MessageBox(hWnd, "Error Reading Dictionary File \n dectalk.dic", "Async Error",MB_OK | MB_ICONSTOP);
 		      break;
 
 		      case ERROR_WRITING_FILE:
-		      MessageBox(hWnd, TEXT("Error Writing File"), TEXT("Async Error"),MB_OK | MB_ICONSTOP);
+		      MessageBox(hWnd, "Error Writing File", "Async Error",MB_OK | MB_ICONSTOP);
 		      break;
 
 		      case ERROR_ALLOCATING_INDEX_MARK_MEMORY:
-		      MessageBox(hWnd, TEXT("Error allocating Index Mark Memory"), TEXT("Async Error"),MB_OK | MB_ICONSTOP);
+		      MessageBox(hWnd, "Error allocating Index Mark Memory", "Async Error",MB_OK | MB_ICONSTOP);
 		      break;
 		      }
 		else
@@ -749,8 +748,8 @@ static  LPFINDREPLACE lpfrText;
 		      if( lpfrText->Flags & FR_FINDNEXT )
 			  if( !FindSearchString( hEdit, &dwOffset, lpfrText ))
 			    {
-			      sprintf( szError, TEXT("Search string \"%s\" was not found."), lpfrText->lpstrFindWhat );
-			      MessageBox( hWnd, szError, TEXT("Find"), MB_OK | MB_ICONEXCLAMATION );
+			      sprintf( szError, "Search string \"%s\" was not found.", lpfrText->lpstrFindWhat );
+			      MessageBox( hWnd, szError, "Find", MB_OK | MB_ICONEXCLAMATION );
 			      lpfrText->Flags = lpfrText->Flags & !FR_FINDNEXT;
 			    }
 
@@ -813,9 +812,9 @@ BOOL menuCommand( HWND hWnd, WPARAM wParam, LPARAM lParam,
 static  char szTextWindow[8192];
 static  char * szCurrentSpeaker = " [:nh]";     /* Default speaker is Harry */
 	CHAR szError[132];
-	LPCTSTR lpszHelpFile = TEXT(DTALK_HELP_FILE_NAME);
-	LPCTSTR lpszHelpTopic = TEXT("Dictionary calls, Windows");
-	LPCTSTR lpszLog = TEXT("log.txt") ;
+        LPCTSTR lpszHelpFile = DTALK_HELP_FILE_NAME;
+        LPCTSTR lpszHelpTopic = "Dictionary calls, Windows";
+	LPCTSTR lpszLog = "log.txt" ;
 	DWORD dwTextLen;
 	LPSTR lpEditText, lpSelBuf, lpXBuf, lpReplBuf;
 	DWORD dwStart, dwEnd, dwFileLen ;
@@ -1809,7 +1808,7 @@ BOOL SpeakText( HANDLE hWnd )
     if( mmStatus )
       {
 	sprintf( szError, "Error in TTS Speak = %d", mmStatus );
-	MessageBox( hWnd, szError, TEXT("TextToSpeechSpeak"), MB_OK | MB_ICONSTOP );
+	MessageBox( hWnd, szError, "TextToSpeechSpeak", MB_OK | MB_ICONSTOP );
 	return( TRUE );
       }
 
@@ -1891,7 +1890,7 @@ BOOL SpeakPronouncation( HANDLE hWnd, char *szSelBuf )
     if( mmStatus )
       {
 	sprintf( szError, "Error in TTS Speak = %d", mmStatus );
-	MessageBox( hWnd, szError, TEXT("TextToSpeechSpeak"), MB_OK | MB_ICONSTOP );
+	MessageBox( hWnd, szError, "TextToSpeechSpeak", MB_OK | MB_ICONSTOP );
       }
 
     //
@@ -1964,7 +1963,7 @@ int MyReadFile( HWND hWnd, char * szReadFile )
 						OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, (HANDLE)NULL ) ;
 
 	if ( hFile == INVALID_HANDLE_VALUE ) {
-		MessageBox( hWnd, TEXT("File open failed."), NULL, MB_OK );
+		MessageBox( hWnd, "File open failed.", NULL, MB_OK );
 		return( TRUE );
 	}
 
@@ -1973,7 +1972,7 @@ int MyReadFile( HWND hWnd, char * szReadFile )
 	if(dwFileSizeLow ==	0xFFFFFFFF &&
 		(dwError = GetLastError()) != NO_ERROR)
 	{
-		MessageBox(hWnd, TEXT("GetFileSize has Failed"), TEXT("Error"), MB_OK|MB_ICONSTOP);
+		MessageBox(hWnd,"GetFileSize is Failed","Error",MB_OK|MB_ICONSTOP);
 		return FALSE;
 	}
 
@@ -1981,7 +1980,7 @@ int MyReadFile( HWND hWnd, char * szReadFile )
 	{
 		if( dwFileSizeLow > 0xFFFF || dwFileSizeHigh)
 		{
-			MessageBox(hWnd, TEXT("This app cannot load files more than 64K size into Dictionary Editor under Windows 95") , TEXT("Information"), MB_OK | MB_ICONSTOP);
+			MessageBox(hWnd,"Can not load files more than 64K size into Dictionary Editor under Windows'95","Information",MB_OK |MB_ICONSTOP);
 			return FALSE;
 		}
 	}
@@ -1995,19 +1994,19 @@ int MyReadFile( HWND hWnd, char * szReadFile )
 		//sprintf(szErrMsg,"The Error code returned by CreateFileMapping is %d\n",dwError);
 		//MessageBox( hWnd, szErrMsg, "ERROR", MB_OK | MB_ICONSTOP );
 		sprintf(szErrMsg,"Invalid File :%s",szReadFile);
-		MessageBox( hWnd, szErrMsg, TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+		MessageBox( hWnd, szErrMsg, "ERROR", MB_OK | MB_ICONSTOP );
 		return FALSE ;
 	}
 	pFileData = MapViewOfFile(hFileMap, FILE_MAP_READ, 0, 0, 0);
 	if(!pFileData)
 	{
-		MessageBox( hWnd, TEXT("MapViewOfFile in MyReadFile Failed"), TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+		MessageBox( hWnd, "MapViewOfFile in MyReadFile Failed", "ERROR", MB_OK | MB_ICONSTOP );
 		return FALSE ;
 	}
 
 	if ((pFileDataPlusOne = malloc(dwFileSizeLow+1)) == NULL)
 	{
-		MessageBox(hWnd, TEXT("Insufficient memory to load file"), TEXT("ERROR"), MB_OK | MB_ICONSTOP);
+		MessageBox(hWnd, "Insufficient memory to load file", "ERROR", MB_OK | MB_ICONSTOP);
 		return FALSE;
 	}
 
@@ -2019,7 +2018,7 @@ int MyReadFile( HWND hWnd, char * szReadFile )
 
 	if (! UnmapViewOfFile ( pFileData ))
 	{
-	  MessageBox( hWnd, TEXT("File Unmap in MyReadFile Failed"), TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+	  MessageBox( hWnd, "File Unmap in MyReadFile Failed", "ERROR", MB_OK | MB_ICONSTOP );
 	  return FALSE ;
 	}
 	CloseHandle(hFileMap);
@@ -2030,7 +2029,7 @@ int MyReadFile( HWND hWnd, char * szReadFile )
 
 	//dwFileSize = GetFileSize( hFile, NULL);
 	//sprintf(szBuf,"file size is %d", dwFileSize);
-	// MessageBox( hWnd, TEXT(szBuf), TEXT("INFO"), MB_OK );
+	// MessageBox( hWnd, szBuf, "INFO", MB_OK );
 
 	// read it's contents into a buffer
 
@@ -2056,8 +2055,8 @@ BOOL AskToSave( HWND hWnd, LPOPENFILENAME OpenFileName, char szFileTitle[] )
     char szBuf[128];
 
     iResponse = MessageBox(hWnd,
-	     TEXT("The Text in this file has changed.\n\n Do you wish to save the changes?"),
-	     TEXT("windic"),  MB_YESNOCANCEL | MB_ICONEXCLAMATION );
+	     "The Text in this file has changed.\n\n Do you wish to save the changes?",
+	     "windic",  MB_YESNOCANCEL | MB_ICONEXCLAMATION );
 
     switch( iResponse )
       {
@@ -2088,8 +2087,8 @@ BOOL AskToCompile( HWND hWnd, HWND hEdit )
     int iResponse;
 
     iResponse = MessageBox(hWnd,
-	     TEXT("A dictionary file has not been created.\n\n Do you wish to create one now?"),
-	     TEXT("windic"),  MB_YESNOCANCEL | MB_ICONEXCLAMATION );
+	     "A dictionary file has not been created.\n\n Do you wish to create one now?",
+	     "windic",  MB_YESNOCANCEL | MB_ICONEXCLAMATION );
 
     switch( iResponse )
       {
@@ -2162,7 +2161,7 @@ BOOL APIENTRY AboutDlgProc( HWND hWnd,
 
     if ( pString == NULL )
     {
-      MessageBox( hWnd, TEXT("Out of Memory"), TEXT("Error"), MB_OK );
+      MessageBox( hWnd, "Out of Memory", "Error", MB_OK );
       return( TRUE );
     }
 
@@ -2257,8 +2256,8 @@ static  HANDLE hFile = 0;
     i = strcspn( szFile, "." );
     if( strncmp( CharLower(&szFile[i+1]),"dic", 3 ) == 0)
       {
-	MessageBox( hWnd, TEXT("Filename can not have a .dic extension.\n\nFile not saved."),
-			TEXT("Filename Error"), MB_ICONEXCLAMATION | MB_OK );
+	MessageBox( hWnd, "Filename can not have a .dic extension.\n\nFile not saved.",
+			"Filename Error", MB_ICONEXCLAMATION | MB_OK );
 	return( FALSE );
       }
 
@@ -2272,7 +2271,7 @@ static  HANDLE hFile = 0;
 
     if( hFile == INVALID_HANDLE_VALUE )
       {
-	MessageBox( hWnd, TEXT("File open failed."), NULL, MB_OK );
+	MessageBox( hWnd, "File open failed.", NULL, MB_OK );
 	return( FALSE );
       }
 
@@ -2288,7 +2287,7 @@ static  HANDLE hFile = 0;
 
     if( !UnmapViewOfFile( pFileData ))
       {
-	MessageBox( hWnd, TEXT("File Unmap Failed"), TEXT("ERROR"), MB_OK | MB_ICONSTOP );
+	MessageBox( hWnd, "File Unmap Failed", "ERROR", MB_OK | MB_ICONSTOP );
 	return FALSE ;
       }
 
@@ -2705,7 +2704,7 @@ LRESULT _stdcall AppGetWindowsVersion( PTSTR pszEnvironment,
 	static TCHAR    szProcessorIntel[]  = TEXT("Intel ");
 	static TCHAR    szProcessorMIPS[]   = TEXT("MIPS R");
 	static TCHAR    szProcessorAlpha[]  = TEXT("DEC Alpha ");
-	static TCHAR    szProcessorDunno[]  = TEXT("Unknown Processor");
+	static TCHAR    szProcessorDunno[]  = TEXT("Dunno zYz");
 
 	SYSTEM_INFO sysinfo;
 	PTSTR       pszProcessor;
