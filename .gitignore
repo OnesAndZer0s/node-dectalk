@@ -10,3 +10,4 @@ build/*
 !build/UHIDDevice.js
 !build/UHIDDevice.d.ts
 !build/Release
+dectalk/**
