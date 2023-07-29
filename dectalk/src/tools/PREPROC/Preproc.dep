@@ -1,9 +1,0 @@
-# Microsoft Developer Studio Generated Dependency File, included by Preproc.mak
-
-.\Lists.c : \
-	".\lists.h"\
-	
-
-.\Preproc.c : \
-	".\lists.h"\
-	

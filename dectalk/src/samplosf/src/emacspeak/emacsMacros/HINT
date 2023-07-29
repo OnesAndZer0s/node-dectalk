@@ -1,7 +1,0 @@
-
-
-To convert the texinfo file to a postscript file:
-
-virtex emacspeak.texinfo	The output is a 'dvi' file.
-
-dvi2ps emacspeak.dvi > emacspeak.ps
