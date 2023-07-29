@@ -37,7 +37,7 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
     DecTalkAddon( Napi::Env env, Napi::Object exports ) {
       DefineAddon( exports,
           {
-              // InstanceMethod( "hello", &DecTalkAddon::Hello, napi_enumerable ),
+              InstanceMethod( "hello", &DecTalkAddon::Hello, napi_enumerable ),
           } );
 
       DecTalk::Init( env, exports );

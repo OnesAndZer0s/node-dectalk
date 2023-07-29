@@ -1,6 +1,6 @@
 #include "src/DecTalk.h"
 
-#include "dectalk/src/dapi/src/api/ttsapi.h"
+// #include "dectalk/src/dapi/src/api/ttsapi.h"
 #include "src/LanguageParamsTag.h"
 #include "src/TTSBufferTag.h"
 #include "src/TTSCapsTag.h"
