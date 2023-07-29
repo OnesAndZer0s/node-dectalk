@@ -38,16 +38,16 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
       DefineAddon( exports,
           {
               // InstanceMethod( "hello", &DecTalkAddon::Hello, napi_enumerable ),
-              // InstanceMethod( "asyncSpeak", SpeakAsync, napi_enumerable )
-
           } );
 
       DecTalk::Init( env, exports );
       LanguageParamsTag::Init( env, exports );
       TTSCapsTag::Init( env, exports );
-      TTSPhonemeTag::Init( env, exports );
-      TTSIndexTag::Init( env, exports );
-      TTSBufferTag::Init( env, exports );
+
+      // literally cannot do anything with these yet
+      // TTSPhonemeTag::Init( env, exports );
+      // TTSIndexTag::Init( env, exports );
+      // TTSBufferTag::Init( env, exports );
     }
 
   private:
