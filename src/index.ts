@@ -115,90 +115,66 @@ export enum DeviceID {
 
 export class DecTalk extends addon.DecTalk {
 
-  // StaticMethod( "getCapabilities", &DecTalk::GetCapabilities ),
-
-  // InstanceMethod( "openWaveFileOut", &DecTalk::OpenWaveFileOut ),
-  // InstanceMethod( "closeWaveFileOut", &DecTalk::CloseWaveFileOut ),
-
-  // InstanceMethod( "openLogFile", &DecTalk::OpenLogFile ),
-  // InstanceMethod( "closeLogFile", &DecTalk::CloseLogFile ),
-
-  // // InstanceMethod( "openInMemory", &DecTalk::OpenInMemory ),
-  // // InstanceMethod( "closeInMemory", &DecTalk::CloseInMemory ),
-  // // InstanceMethod( "addBuffer", &DecTalk::AddBuffer ),
-  // // InstanceMethod( "returnBuffer", &DecTalk::ReturnBuffer ),
-
-  // InstanceAccessor< &DecTalk::GetSampleRate, &DecTalk::SetSampleRate >( "sampleRate" ),
-  // InstanceAccessor< &DecTalk::GetVolume, &DecTalk::SetVolume >( "volume" ),
-  // InstanceAccessor< &DecTalk::GetAttenuationVolume, &DecTalk::SetAttenuationVolume >( "attenuationVolume" ),
-  // InstanceAccessor< &DecTalk::GetRate, &DecTalk::SetRate >( "rate" ),
-  // InstanceAccessor< &DecTalk::GetSpeaker, &DecTalk::SetSpeaker >( "speaker" ),
-  // InstanceAccessor< &DecTalk::GetLanguage, &DecTalk::SetLanguage >( "language" ),
-
-  // InstanceAccessor< &DecTalk::GetInputCharacterCount >( "inputCharacterCount" ),
-  // InstanceAccessor< &DecTalk::GetIsSpeaking >( "isSpeaking" ),
-  // InstanceAccessor< &DecTalk::GetWaveOutDeviceID >( "waveOutDeviceID" ),
-
   constructor () {
     super();
   }
 
-  startup ( deviceID?: DeviceID | number, deviceManagement: DeviceManagement = DeviceManagement.OwnAudioDevice ) {
-    super.startup( deviceID, deviceManagement );
+  startup ( deviceID?: DeviceID | number, deviceManagement: DeviceManagement = DeviceManagement.OwnAudioDevice ): MMSysError {
+    return super.startup( deviceID, deviceManagement );
   }
 
-  shutdown () {
-    super.shutdown();
+  shutdown (): MMSysError {
+    return super.shutdown();
   }
 
-  async speak ( text: string | string[], force: boolean = false ): Promise<void> {
+  async speak ( text: string | string[], force: boolean = false ): Promise<MMSysError> {
     if ( typeof text !== "string" ) {
       text = text.join( " " );
     }
     return await super.speak( text, force );
   }
 
-  speakSync ( text: string | string[], force: boolean = false ) {
+  speakSync ( text: string | string[], force: boolean = false ): MMSysError {
     if ( typeof text !== "string" ) {
       text = text.join( " " );
     }
-    super.speakSync( text, force );
+    return super.speakSync( text, force );
   }
 
-  async sync () {
-    await super.sync();
+  async sync (): Promise<MMSysError> {
+    return await super.sync();
   }
 
-  syncSync () {
-    super.syncSync();
+  syncSync (): MMSysError {
+    return super.syncSync();
   }
 
-  openWaveFileOut ( filename: string, format: WaveFormat ) {
-    super.openWaveFileOut( filename, format );
+  openWaveFileOut ( filename: string, format: WaveFormat ): MMSysError {
+    return super.openWaveFileOut( filename, format );
   }
 
-  closeWaveFileOut () {
-    super.closeWaveFileOut();
+  closeWaveFileOut (): MMSysError {
+    return super.closeWaveFileOut();
   }
 
-  openLogFile ( filename: string ) {
-    super.openLogFile( filename );
+  openLogFile ( filename: string ): MMSysError {
+    return super.openLogFile( filename );
   }
 
-  closeLogFile () {
-    super.closeLogFile();
+  closeLogFile (): MMSysError {
+    return super.closeLogFile();
   }
 
-  pause () {
-    super.pause();
+  pause (): MMSysError {
+    return super.pause();
   }
 
-  resume () {
-    super.resume();
+  resume (): MMSysError {
+    return super.resume();
   }
 
-  reset () {
-    super.reset();
+  reset (): MMSysError {
+    return super.reset();
   }
 
   get sampleRate (): number {
@@ -265,12 +241,12 @@ export class DecTalk extends addon.DecTalk {
     return super.getCapabilities();
   }
 
-  loadUserDictionary ( filename: string ) {
-    super.loadUserDictionary( filename );
+  loadUserDictionary ( filename: string ): MMSysError {
+    return super.loadUserDictionary( filename );
   }
 
-  unloadUserDictionary () {
-    super.unloadUserDictionary();
+  unloadUserDictionary (): MMSysError {
+    return super.unloadUserDictionary();
   }
 
 }

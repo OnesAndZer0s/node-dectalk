@@ -14,17 +14,17 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
     LPTTS_HANDLE_T ttsHandle = NULL;
 
   private:
-    void Startup( const Napi::CallbackInfo& info );
-    void SpeakSync( const Napi::CallbackInfo& info );
+    Napi::Value Startup( const Napi::CallbackInfo& info );
+    Napi::Value SpeakSync( const Napi::CallbackInfo& info );
     Napi::Value Speak( const Napi::CallbackInfo& info );
 
-    void SyncSync( const Napi::CallbackInfo& info );
+    Napi::Value SyncSync( const Napi::CallbackInfo& info );
     Napi::Value Sync( const Napi::CallbackInfo& info );
 
-    void Shutdown( const Napi::CallbackInfo& info );
-    void Pause( const Napi::CallbackInfo& info );
-    void Resume( const Napi::CallbackInfo& info );
-    void Reset( const Napi::CallbackInfo& info );
+    Napi::Value Shutdown( const Napi::CallbackInfo& info );
+    Napi::Value Pause( const Napi::CallbackInfo& info );
+    Napi::Value Resume( const Napi::CallbackInfo& info );
+    Napi::Value Reset( const Napi::CallbackInfo& info );
 
     Napi::Value GetSampleRate( const Napi::CallbackInfo& info );
     void SetSampleRate( const Napi::CallbackInfo& info, const Napi::Value& value );
@@ -50,20 +50,20 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
 
     static Napi::Value GetCapabilities( const Napi::CallbackInfo& info );
 
-    void OpenWaveFileOut( const Napi::CallbackInfo& info );
-    void CloseWaveFileOut( const Napi::CallbackInfo& info );
+    Napi::Value OpenWaveFileOut( const Napi::CallbackInfo& info );
+    Napi::Value CloseWaveFileOut( const Napi::CallbackInfo& info );
 
-    void OpenLogFile( const Napi::CallbackInfo& info );
-    void CloseLogFile( const Napi::CallbackInfo& info );
+    Napi::Value OpenLogFile( const Napi::CallbackInfo& info );
+    Napi::Value CloseLogFile( const Napi::CallbackInfo& info );
 
-    void OpenInMemory( const Napi::CallbackInfo& info );
-    void CloseInMemory( const Napi::CallbackInfo& info );
+    Napi::Value OpenInMemory( const Napi::CallbackInfo& info );
+    Napi::Value CloseInMemory( const Napi::CallbackInfo& info );
 
-    void AddBuffer( const Napi::CallbackInfo& info );
+    Napi::Value AddBuffer( const Napi::CallbackInfo& info );
     Napi::Value ReturnBuffer( const Napi::CallbackInfo& info );
 
-    void LoadUserDictionary( const Napi::CallbackInfo& info );
-    void UnloadUserDictionary( const Napi::CallbackInfo& info );
+    Napi::Value LoadUserDictionary( const Napi::CallbackInfo& info );
+    Napi::Value UnloadUserDictionary( const Napi::CallbackInfo& info );
 
     // loaduserdictionary
     // unloaduerdictionary

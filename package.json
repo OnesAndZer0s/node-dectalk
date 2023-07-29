@@ -13,8 +13,8 @@
     "aeiou",
     "speech synthesis"
   ],
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "author": "OnesAndZer0s",
   "license": "GNU",
   "dependencies": {
