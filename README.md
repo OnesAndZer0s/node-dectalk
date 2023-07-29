@@ -21,5 +21,6 @@ https://onesandzer0s.github.io/node-dectalk/
 - [Old DecTalk Source Code](https://github.com/dectalk/dectalk/)
 
 ## TODO
-- [ ] Add documentation.
-- [ ] Add TypeScript support.
+- [x] Add documentation.
+- [x] Add TypeScript support.
+- [ ] Figure out a way to add in the `TextToSpeechAddBuffer` and `callback` functions.
