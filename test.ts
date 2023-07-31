@@ -29,7 +29,7 @@ console.log( talk.startup( DeviceID.Mapper, DeviceManagement.DoNotUseAudioDevice
 console.log( talk.openInMemory( WaveFormat.Format1M16 ) );
 
 console.log( talk.addBuffer( buf ) );
-console.log( talk.speakSync( "a" ) );
+console.log( talk.speakSync( "a b c d e f g" ) );
 
 // // talk.speak(
 // //   [

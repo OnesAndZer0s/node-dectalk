@@ -170,7 +170,7 @@ class DecTalk extends addon.DecTalk {
         return super.shutdown();
     }
     /**
-     * This function queues to the Text-To-Speech system.
+     * Queues to the Text-To-Speech system.
      * @async
      * @param { ( string | string[] ) } text - The text to be spoken.
      * @param { boolean } [ force = false ] - Specifies if the text is to be pushed through the Text-To-Speech system even if it is not on a clause boundary.
@@ -194,7 +194,7 @@ class DecTalk extends addon.DecTalk {
         });
     }
     /**
-     * This function queues to the Text-To-Speech system.
+     * Queues to the Text-To-Speech system.
      * @param { ( string | string[] ) } text - The text to be spoken.
      * @param { boolean } [ force = false ] - Specifies if the text is to be pushed through the Text-To-Speech system even if it is not on a clause boundary.
      * @return  {MMSysError} The value will be zero if the function is successful.
@@ -245,7 +245,6 @@ class DecTalk extends addon.DecTalk {
     }
     /**
      * Creates a wave file. All subsequent calls to the `speak()` function cause the audio to be written to the specified file until the `closeWaveFile()` function is called.
-     *
      * @param {string} filename - The name of the wave file to be created.
      * @param {WaveFormat} format - Ddetermines the wave file audio sample format.
      * @return {MMSysError} The value will be zero if the function is successful.
@@ -279,7 +278,7 @@ class DecTalk extends addon.DecTalk {
         return super.closeWaveFileOut();
     }
     /**
-     *  Creates a file which contains either text, phonemes, or syllables. The phonemes and syllables are written using the arpabet alphabet. After calling this function, all subsequent calls to the `speak()` function cause the log data to be written to specified file until the `closeLogFile()` function is called.
+     * Creates a file which contains either text, phonemes, or syllables. The phonemes and syllables are written using the arpabet alphabet. After calling this function, all subsequent calls to the `speak()` function cause the log data to be written to specified file until the `closeLogFile()` function is called.
      * @param {string} filename - The name of the log file to be created.
      * @param {LogType=} [logType] - Specifies the type of log file to be created.
      * @return {MMSysError} The value will be zero if the function is successful.
@@ -336,7 +335,7 @@ class DecTalk extends addon.DecTalk {
         return super.resume();
     }
     /**
-     * cancels all audio output and deletes any text from the Text-To-Speech systems text queue. All pending index marks are discarded.
+     * Cancels all audio output and deletes any text from the Text-To-Speech systems text queue. All pending index marks are discarded.
      * @return {MMSysError} The value will be zero if the function is successful.
      * The return value will be one of the following constants:
      *
@@ -414,7 +413,7 @@ class DecTalk extends addon.DecTalk {
         return super.loadUserDictionary(filename);
     }
     /**
-     * Unloads the currently loaded user dictionary
+     * Unloads the currently loaded user dictionary.
      * @returns {MMSysError} The value will be zero if the function is successful.
      * The return value will be one of the following constants:
      *
@@ -463,8 +462,28 @@ class DecTalk extends addon.DecTalk {
     closeInMemory() {
         return super.closeInMemory();
     }
+    /**
+     * Add a buffer to the memory list.
+     * @param {TTSBuffer} buf - The buffer to be added to the memory list.
+     * @returns {MMSysError} The value will be zero if the function is successful.
+     * The return value will be one of the following constants:
+     *
+     * `NoError` = 0 - Normal successful completion <br/>
+     * `InvalParam` - Invalid Parameter. <br/>
+     * `Error` - Output to memory not enabled, or unable to create a system object <br/>
+     * `InvalHandle` - The Text-To-Speech handle is invalid <br/>
+     * @memberof DecTalk
+     */
     addBuffer(buf) {
         return super.addBuffer(buf);
+    }
+    /**
+     * Cause the current buffer to be returned even if it not yet full. The buffer may in fact be empty.
+     * @returns {TTSBuffer} The buffer returned by the Text-To-Speech system.
+     * @memberof DecTalk
+     */
+    returnBuffer() {
+        return super.returnBuffer();
     }
 }
 exports.DecTalk = DecTalk;

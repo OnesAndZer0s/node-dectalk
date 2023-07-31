@@ -1,6 +1,5 @@
 #include "src/DecTalk.h"
 
-// #include "dectalk/src/dapi/src/api/ttsapi.h"
 #include "src/LanguageParamsTag.h"
 #include "src/TTSBufferTag.h"
 #include "src/TTSCapsTag.h"
@@ -13,12 +12,6 @@
 #include <functional>
 #include <initializer_list>
 #include <iostream>
-
-// #include "AsyncTest.h" // NOLINT(build/include)
-// #include "dectalk/dist/include/dtk/dtmmedefs.h"
-// #include "dectalk/dist/include/dtk/ttsapi.h"
-// #include "dectalk/src/dapi/src/api/ttsapi.h"
-
 #include <napi.h>
 #include <string>
 #include <ttsapi.h>
@@ -54,7 +47,7 @@ Napi::Object DecTalk::Init( Napi::Env env, Napi::Object exports ) {
               InstanceMethod( "openInMemory", &DecTalk::OpenInMemory ),
               InstanceMethod( "closeInMemory", &DecTalk::CloseInMemory ),
               InstanceMethod( "addBuffer", &DecTalk::AddBuffer ),
-              // InstanceMethod( "returnBuffer", &DecTalk::ReturnBuffer ),
+              InstanceMethod( "returnBuffer", &DecTalk::ReturnBuffer ),
 
               InstanceAccessor< &DecTalk::GetSampleRate, &DecTalk::SetSampleRate >( "sampleRate" ),
               InstanceAccessor< &DecTalk::GetVolume, &DecTalk::SetVolume >( "volume" ),
@@ -546,38 +539,10 @@ Napi::Value DecTalk::AddBuffer( const Napi::CallbackInfo& info ) {
   Napi::Object buffer = info [ 0 ].As< Napi::Object >();
   TTSBufferTag* bufferTag = Napi::ObjectWrap< TTSBufferTag >::Unwrap( buffer );
 
-  // LPTTS_BUFFER_T bs = (LPTTS_BUFFER_T) malloc( sizeof( TTS_BUFFER_T ) );
-
-  // bs.dwBufferLength = 2048;
-  // bs.dwMaximumBufferLength = 2048;
-
-  // create buffer
-  // bs->lpData = (LPSTR) malloc( sizeof( LPSTR ) * 8192 );
-  // create phoneme array
-  // bs->lpPhonemeArray = (LPTTS_PHONEME_T) malloc( sizeof( TTS_PHONEME_T ) * 256 );
-
-  // create index array
-  // bs->lpIndexArray = (LPTTS_INDEX_T) malloc( sizeof( TTS_INDEX_T ) * 256 );
-
-  // set up buffer
-  // bs.dwBufferLength = 0;
-  // bs->dwMaximumBufferLength = 8192;
-  // bs.dwNumberOfIndexMarks = 0;
-  // bs.dwNumberOfPhonemeChanges = 0;
-  // bs->dwMaximumNumberOfIndexMarks = 1;
-  // bs->dwMaximumNumberOfPhonemeChanges = 256;
-
-  // return Napi::Number::New( info.Env(), TextToSpeechAddBuffer( ttsHandle, &bufferTag->ttsBufferT ) );
   return Napi::Number::New( info.Env(), TextToSpeechAddBuffer( ttsHandle, &bufferTag->ttsBufferT ) );
 }
 
 Napi::Value DecTalk::ReturnBuffer( const Napi::CallbackInfo& info ) {
-  if( ttsHandle == NULL )
-    return Napi::Number::New( info.Env(), -1 );
-
-  // if( info.Length() < 1 || !info [ 0 ].IsObject() )
-  //   Napi::Error::New( info.Env(), "AddBuffer requires a buffer.\n" ).ThrowAsJavaScriptException();
-
   LPTTS_BUFFER_T wordsPtr;
 
   int thing = TextToSpeechReturnBuffer( ttsHandle, &wordsPtr );
@@ -585,9 +550,10 @@ Napi::Value DecTalk::ReturnBuffer( const Napi::CallbackInfo& info ) {
   if( thing != MMSYSERR_NOERROR )
     Napi::Error::New( info.Env(), "ReturnBuffer failed with code " + std::to_string( thing ) + "\n" ).ThrowAsJavaScriptException();
 
-  // return Napi::Number::New( info.Env(), dwStatusArray [ 0 ] );
-  // return TTSBufferTag::FromStruct( info.Env(), *wordsPtr );
-  return info.Env().Null();
+  Napi::Value retVal = TTSBufferTag::constructor.New( {} );
+  TTSBufferTag* ttsBuf = Napi::ObjectWrap< TTSBufferTag >::Unwrap( retVal.ToObject() );
+  ttsBuf->ttsBufferT = *wordsPtr;
+  return retVal;
 }
 
 Napi::Value DecTalk::GetCapabilities( const Napi::CallbackInfo& info ) {

@@ -14,9 +14,6 @@ Napi::Object LanguageParamsTag::Init( Napi::Env env, Napi::Object exports ) {
 
   constructor = Napi::Persistent( func );
   constructor.SuppressDestruct();
-  // env.SetInstanceData( constructor );
-
-  // exports.Set( "LanguageParamsTag", func );
   return exports;
 }
 
@@ -24,34 +21,26 @@ LanguageParamsTag::LanguageParamsTag( const Napi::CallbackInfo& info ):
     Napi::ObjectWrap< LanguageParamsTag >( info ) {
 }
 
-LANGUAGE_PARAMS_T LanguageParamsTag::ToStruct() {
-  LANGUAGE_PARAMS_T params;
-  params.dwLanguage = dwLanguage;
-  params.dwLanguageAttributes = dwLanguageAttributes;
-  return params;
-}
-
 Napi::Object LanguageParamsTag::FromStruct( Napi::Env env, LANGUAGE_PARAMS_T params ) {
   Napi::Object from = LanguageParamsTag::constructor.New( {} );
   LanguageParamsTag* langParamTag = Napi::ObjectWrap< LanguageParamsTag >::Unwrap( from );
-  langParamTag->dwLanguage = params.dwLanguage;
-  langParamTag->dwLanguageAttributes = params.dwLanguageAttributes;
+  langParamTag->languageParamsT = params;
 
   return from;
 }
 
 Napi::Value LanguageParamsTag::GetDwLanguage( const Napi::CallbackInfo& info ) {
-  return Napi::Number::New( info.Env(), dwLanguage );
+  return Napi::Number::New( info.Env(), languageParamsT.dwLanguage );
 }
 
 void LanguageParamsTag::SetDwLanguage( const Napi::CallbackInfo& info, const Napi::Value& value ) {
-  dwLanguage = value.As< Napi::Number >().Uint32Value();
+  languageParamsT.dwLanguage = value.As< Napi::Number >().Uint32Value();
 }
 
 Napi::Value LanguageParamsTag::GetDwLanguageAttributes( const Napi::CallbackInfo& info ) {
-  return Napi::Number::New( info.Env(), dwLanguageAttributes );
+  return Napi::Number::New( info.Env(), languageParamsT.dwLanguageAttributes );
 }
 
 void LanguageParamsTag::SetDwLanguageAttributes( const Napi::CallbackInfo& info, const Napi::Value& value ) {
-  dwLanguageAttributes = value.As< Napi::Number >().Uint32Value();
+  languageParamsT.dwLanguageAttributes = value.As< Napi::Number >().Uint32Value();
 }

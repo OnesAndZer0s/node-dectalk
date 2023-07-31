@@ -1,9 +1,18 @@
 /// <reference types="node" />
 declare const addon: any;
-export declare type TTSCallback = (msg: Message, buffer: Buffer) => void;
+export declare type TTSCallback = (msg: Message, param: TTSBuffer) => void;
 export interface LanguageParams {
     readonly language: number;
     readonly languageAttributes: number;
+}
+export interface TTSPhoneme {
+    readonly phoneme: number;
+    readonly duration: number;
+    readonly sampleNumber: number;
+}
+export interface TTSIndex {
+    readonly index: number;
+    readonly sampleNumber: number;
 }
 export declare enum Message {
     Buffer = 9,
@@ -154,7 +163,7 @@ export declare class DecTalk extends addon.DecTalk {
      */
     shutdown(): MMSysError;
     /**
-     * This function queues to the Text-To-Speech system.
+     * Queues to the Text-To-Speech system.
      * @async
      * @param { ( string | string[] ) } text - The text to be spoken.
      * @param { boolean } [ force = false ] - Specifies if the text is to be pushed through the Text-To-Speech system even if it is not on a clause boundary.
@@ -168,7 +177,7 @@ export declare class DecTalk extends addon.DecTalk {
      */
     speak(text: string | string[], force?: boolean): Promise<MMSysError>;
     /**
-     * This function queues to the Text-To-Speech system.
+     * Queues to the Text-To-Speech system.
      * @param { ( string | string[] ) } text - The text to be spoken.
      * @param { boolean } [ force = false ] - Specifies if the text is to be pushed through the Text-To-Speech system even if it is not on a clause boundary.
      * @return  {MMSysError} The value will be zero if the function is successful.
@@ -205,7 +214,6 @@ export declare class DecTalk extends addon.DecTalk {
     syncSync(): MMSysError;
     /**
      * Creates a wave file. All subsequent calls to the `speak()` function cause the audio to be written to the specified file until the `closeWaveFile()` function is called.
-     *
      * @param {string} filename - The name of the wave file to be created.
      * @param {WaveFormat} format - Ddetermines the wave file audio sample format.
      * @return {MMSysError} The value will be zero if the function is successful.
@@ -235,7 +243,7 @@ export declare class DecTalk extends addon.DecTalk {
      */
     closeWaveFile(): MMSysError;
     /**
-     *  Creates a file which contains either text, phonemes, or syllables. The phonemes and syllables are written using the arpabet alphabet. After calling this function, all subsequent calls to the `speak()` function cause the log data to be written to specified file until the `closeLogFile()` function is called.
+     * Creates a file which contains either text, phonemes, or syllables. The phonemes and syllables are written using the arpabet alphabet. After calling this function, all subsequent calls to the `speak()` function cause the log data to be written to specified file until the `closeLogFile()` function is called.
      * @param {string} filename - The name of the log file to be created.
      * @param {LogType=} [logType] - Specifies the type of log file to be created.
      * @return {MMSysError} The value will be zero if the function is successful.
@@ -284,7 +292,7 @@ export declare class DecTalk extends addon.DecTalk {
      */
     resume(): MMSysError;
     /**
-     * cancels all audio output and deletes any text from the Text-To-Speech systems text queue. All pending index marks are discarded.
+     * Cancels all audio output and deletes any text from the Text-To-Speech systems text queue. All pending index marks are discarded.
      * @return {MMSysError} The value will be zero if the function is successful.
      * The return value will be one of the following constants:
      *
@@ -326,7 +334,7 @@ export declare class DecTalk extends addon.DecTalk {
      */
     loadUserDictionary(filename: string): MMSysError;
     /**
-     * Unloads the currently loaded user dictionary
+     * Unloads the currently loaded user dictionary.
      * @returns {MMSysError} The value will be zero if the function is successful.
      * The return value will be one of the following constants:
      *
@@ -367,7 +375,25 @@ export declare class DecTalk extends addon.DecTalk {
      * @memberof DecTalk
      */
     closeInMemory(): MMSysError;
-    addBuffer(buf: any): MMSysError;
+    /**
+     * Add a buffer to the memory list.
+     * @param {TTSBuffer} buf - The buffer to be added to the memory list.
+     * @returns {MMSysError} The value will be zero if the function is successful.
+     * The return value will be one of the following constants:
+     *
+     * `NoError` = 0 - Normal successful completion <br/>
+     * `InvalParam` - Invalid Parameter. <br/>
+     * `Error` - Output to memory not enabled, or unable to create a system object <br/>
+     * `InvalHandle` - The Text-To-Speech handle is invalid <br/>
+     * @memberof DecTalk
+     */
+    addBuffer(buf: TTSBuffer): MMSysError;
+    /**
+     * Cause the current buffer to be returned even if it not yet full. The buffer may in fact be empty.
+     * @returns {TTSBuffer} The buffer returned by the Text-To-Speech system.
+     * @memberof DecTalk
+     */
+    returnBuffer(): TTSBuffer;
 }
 export declare class TTSBuffer extends addon.TTSBuffer {
     constructor(options: {
@@ -375,5 +401,11 @@ export declare class TTSBuffer extends addon.TTSBuffer {
         phoneme?: number;
         index?: number;
     });
+    readonly data: Buffer;
+    readonly phoneme: TTSPhoneme[];
+    readonly index: TTSIndex[];
+    readonly maxBufferLength: number;
+    readonly maxPhonemeLength: number;
+    readonly maxIndexLength: number;
 }
 export {};

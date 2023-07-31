@@ -12,13 +12,10 @@ class LanguageParamsTag : public Napi::ObjectWrap< LanguageParamsTag > {
 
     LANGUAGE_PARAMS_T ToStruct();
     static Napi::Object FromStruct( Napi::Env env, LANGUAGE_PARAMS_T caps );
-
-    LANGUAGE_T dwLanguage;
     Napi::Value GetDwLanguage( const Napi::CallbackInfo& info );
     void SetDwLanguage( const Napi::CallbackInfo& info, const Napi::Value& value );
-
-    DWORD dwLanguageAttributes;
-
     Napi::Value GetDwLanguageAttributes( const Napi::CallbackInfo& info );
     void SetDwLanguageAttributes( const Napi::CallbackInfo& info, const Napi::Value& value );
+
+    LANGUAGE_PARAMS_T languageParamsT;
 };
