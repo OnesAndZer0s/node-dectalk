@@ -45,9 +45,9 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
       TTSCapsTag::Init( env, exports );
 
       // literally cannot do anything with these yet
-      // TTSPhonemeTag::Init( env, exports );
-      // TTSIndexTag::Init( env, exports );
-      // TTSBufferTag::Init( env, exports );
+      TTSPhonemeTag::Init( env, exports );
+      TTSIndexTag::Init( env, exports );
+      TTSBufferTag::Init( env, exports );
     }
 
   private:
@@ -61,8 +61,11 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
 
       // setup callback
 
+      Napi::Function ass = info [ 0 ].As< Napi::Function >();
+
       VOID( CALLBACK * callback )
       ( LONG, LONG, DWORD, UINT ) = []( LONG lParam1, LONG lParam2, DWORD cbParam, UINT uiMsg ) {
+        fprintf( stderr, "ASSBLASTER\n" );
         switch( uiMsg ) {
           case TTS_MSG_STATUS:
             fprintf( stderr, PROGRAM_NAME ": TTS_MSG_STATUS \n" );
@@ -92,7 +95,13 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
         // fprintf( stderr, PROGRAM_NAME ": Callback called \n" );
       };
 
-      int status = TextToSpeechStartup( &ttsHandle, devNo, devOptions, callback, DO_NOT_USE_AUDIO_DEVICE );
+      std::function< VOID( LONG, LONG, DWORD, UINT ) > ass2 = []( LONG lParam1, LONG lParam2, DWORD cbParam, UINT uiMsg ) {
+        fprintf( stderr, "ASSBLASTER\n" );
+      };
+      VOID( *CALLBACK penis )
+      ( LONG, LONG, DWORD, UINT ) = ass2.target< VOID( LONG, LONG, DWORD, UINT ) >();
+
+      int status = TextToSpeechStartupEx( &ttsHandle, devNo, devOptions, callback, DO_NOT_USE_AUDIO_DEVICE );
       if( status != MMSYSERR_NOERROR ) {
         fprintf( stderr, PROGRAM_NAME ": TextToSpeechStartup failed with code %d, exiting.\n", status );
         exit( -1 );
@@ -104,7 +113,7 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
       // bs.dwMaximumBufferLength = 2048;
 
       // create buffer
-      bs.lpData = (LPSTR) malloc( sizeof( LPSTR ) * 256 );
+      bs.lpData = (LPSTR) malloc( sizeof( LPSTR ) * 8192 );
 
       // create phoneme array
       bs.lpPhonemeArray = (LPTTS_PHONEME_T) malloc( sizeof( TTS_PHONEME_T ) * 256 );
@@ -114,7 +123,7 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
 
       // set up buffer
       // bs.dwBufferLength = 0;
-      bs.dwMaximumBufferLength = 256;
+      bs.dwMaximumBufferLength = 8192;
       // bs.dwNumberOfIndexMarks = 0;
       // bs.dwNumberOfPhonemeChanges = 0;
       bs.dwMaximumNumberOfIndexMarks = 1;
@@ -132,7 +141,7 @@ class DecTalkAddon : public Napi::Addon< DecTalkAddon > {
       TextToSpeechOpenInMemory( ttsHandle, WAVE_FORMAT_1M16 );
       TextToSpeechAddBuffer( ttsHandle, &bs );
 
-      LPSTR spk = const_cast< char* >( "macro hard" );
+      LPSTR spk = const_cast< char* >( "a" );
 
       TextToSpeechSpeak( ttsHandle, spk, TTS_NORMAL );
 

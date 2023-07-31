@@ -4,6 +4,7 @@
 // #include "dectalk/src/dapi/src/api/ttsapi.h"
 #include "napi.h"
 
+#include <list>
 #include <ttsapi.h>
 
 class DecTalk : public Napi::ObjectWrap< DecTalk > {
@@ -13,7 +14,12 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
 
     LPTTS_HANDLE_T ttsHandle = NULL;
 
+    Napi::ThreadSafeFunction ttsCb;
+
+    static std::vector< DecTalk* > ttsList;
+
   private:
+
     Napi::Value Startup( const Napi::CallbackInfo& info );
     Napi::Value SpeakSync( const Napi::CallbackInfo& info );
     Napi::Value Speak( const Napi::CallbackInfo& info );
@@ -64,4 +70,6 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
 
     Napi::Value LoadUserDictionary( const Napi::CallbackInfo& info );
     Napi::Value UnloadUserDictionary( const Napi::CallbackInfo& info );
+
+    static Napi::Value GetVersion( const Napi::CallbackInfo& info );
 };

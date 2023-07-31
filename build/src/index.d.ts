@@ -1,17 +1,25 @@
+/// <reference types="node" />
 declare const addon: any;
+export declare type TTSCallback = (msg: Message, buffer: Buffer) => void;
 export interface LanguageParams {
-    language: number;
-    languageAttributes: number;
+    readonly language: number;
+    readonly languageAttributes: number;
+}
+export declare enum Message {
+    Buffer = 9,
+    IndexMark = 1,
+    Status = 2,
+    Visual = 3
 }
 export interface TTSCaps {
-    numberOfLanguages: number;
-    languageParams: LanguageParams[];
-    sampleRate: number;
-    minimumSpeakingRate: number;
-    maximumSpeakingRate: number;
-    numberOfPredefinedSpeakers: number;
-    characterSet: number;
-    version: number;
+    readonly numberOfLanguages: number;
+    readonly languageParams: LanguageParams[];
+    readonly sampleRate: number;
+    readonly minimumSpeakingRate: number;
+    readonly maximumSpeakingRate: number;
+    readonly numberOfPredefinedSpeakers: number;
+    readonly characterSet: number;
+    readonly version: number;
 }
 export declare enum LogType {
     /** Log text input. */
@@ -135,7 +143,7 @@ export declare class DecTalk extends addon.DecTalk {
      *    `InvalParam` - Invalid param for th eload dictionary  <br/>
      * @memberof DecTalk
      */
-    startup(deviceID?: DeviceID | number, deviceManagement?: DeviceManagement): MMSysError;
+    startup(deviceID?: DeviceID | number, deviceManagement?: DeviceManagement, cb?: TTSCallback): MMSysError;
     /**
      * DECtalk shutdown function.
      * @returns {MMSysError} This value is zero if shutdown was successful.
@@ -327,5 +335,45 @@ export declare class DecTalk extends addon.DecTalk {
      * @memberof DecTalk
      */
     unloadUserDictionary(): MMSysError;
+    /**
+     * Returns the current version of the Text-To-Speech system.
+     * @readonly
+     * @static
+     * @memberof DecTalk
+     */
+    static get version(): string;
+    /**
+     * Causes all speech samples created by the Text-To-Speech system to be places in user supplied shared memory buffers. These buffers are supplied to the system by the `addBuffer()` function.
+     * @param {WaveFormat} format - Determines the wave file audio sample format
+     * @return {MMSysError} The value will be zero if the function is successful.
+     * The return value will be one of the following constants:
+     *
+     * `NoError` = 0 - Normal successful completion <br/>
+     * `InvalParam` - An invalid parameter was passed (An illegal wave output format value.) <br/>
+     * `NoMem` - Unable to allocate memory <br/>
+     * `Error` - Illegal output state <br/>
+     * `InvalHandle` - The Text-To-Speech handle is invalid <br/>
+     * @memberof DecTalk
+     */
+    openInMemory(format: WaveFormat): MMSysError;
+    /**
+     * Return the Text-To-Speech system to it's normal state. Speech samples will be routed to the audio device (if audio output was enabled at startup).
+     * @return {MMSysError} The value will be zero if the function is successful.
+     * The return value will be one of the following constants:
+     *
+     * `NoError` = 0 - Normal successful completion <br/>
+     * `Error` - Output to memory not enabled, or unable to create a system object <br/>
+     * `InvalHandle` - The Text-To-Speech handle is invalid <br/>
+     * @memberof DecTalk
+     */
+    closeInMemory(): MMSysError;
+    addBuffer(buf: any): MMSysError;
+}
+export declare class TTSBuffer extends addon.TTSBuffer {
+    constructor(options: {
+        data?: number;
+        phoneme?: number;
+        index?: number;
+    });
 }
 export {};

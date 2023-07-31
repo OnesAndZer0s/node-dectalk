@@ -33,6 +33,23 @@ Napi::Object TTSBufferTag::Init( Napi::Env env, Napi::Object exports ) {
 
 TTSBufferTag::TTSBufferTag( const Napi::CallbackInfo& info ):
     Napi::ObjectWrap< TTSBufferTag >( info ) {
+  // check if there was object passed int constructor
+
+  int dataLength = 256;
+  int phonemeLength = 1;
+  int indexLength = 256;
+  if( info.Length() >= 1 ) {
+    Napi::Object obj = info [ 0 ].As< Napi::Object >();
+
+    if( obj.Has( "data" ) )
+      dataLength = obj.Get( "data" ).As< Napi::Number >().Uint32Value();
+
+    if( obj.Has( "phoneme" ) )
+      phonemeLength = obj.Get( "phoneme" ).As< Napi::Number >().Uint32Value();
+
+    if( obj.Has( "index" ) )
+      indexLength = obj.Get( "index" ).As< Napi::Number >().Uint32Value();
+  }
   TTS_BUFFER_T bs = *(LPTTS_BUFFER_T) malloc( sizeof( TTS_BUFFER_T ) );
   // bs.dwBufferLength = 0;
   // bs.dwMaximumNumberOfIndexMarks = 0;
@@ -45,40 +62,27 @@ TTSBufferTag::TTSBufferTag( const Napi::CallbackInfo& info ):
   // bs.lpPhonemeArray = NULL;
   // bs.lpData = NULL;
 
-  bs.lpData = (LPSTR) malloc( sizeof( LPSTR ) * 256 );
+  bs.lpData = (LPSTR) malloc( sizeof( LPSTR ) * dataLength );
 
   // create phoneme array
-  bs.lpPhonemeArray = (LPTTS_PHONEME_T) malloc( sizeof( TTS_PHONEME_T ) * 256 );
+  bs.lpPhonemeArray = (LPTTS_PHONEME_T) malloc( sizeof( TTS_PHONEME_T ) * phonemeLength );
 
   // create index array
-  bs.lpIndexArray = (LPTTS_INDEX_T) malloc( sizeof( TTS_INDEX_T ) * 256 );
+  bs.lpIndexArray = (LPTTS_INDEX_T) malloc( sizeof( TTS_INDEX_T ) * indexLength );
 
-  // set up buffer
-  // bs.dwBufferLength = 0;
-  bs.dwMaximumBufferLength = 256;
-  // bs.dwNumberOfIndexMarks = 0;
-  // bs.dwNumberOfPhonemeChanges = 0;
-  bs.dwMaximumNumberOfIndexMarks = 1;
-  bs.dwMaximumNumberOfPhonemeChanges = 256;
+  bs.dwMaximumBufferLength = dataLength;
+  bs.dwMaximumNumberOfIndexMarks = phonemeLength;
+  bs.dwMaximumNumberOfPhonemeChanges = indexLength;
   ttsBufferT = bs;
 }
 
-// Napi::Object TTSBufferTag::FromStruct( Napi::Env env, TTS_BUFFER_T bufs ) {
-//   Napi::Object from = TTSBufferTag::constructor.New( {} );
-//   TTSBufferTag* buf = Napi::ObjectWrap< TTSBufferTag >::Unwrap( from );
-//   buf->lpData = bufs.lpData;
-//   buf->lpPhonemeArray = bufs.lpPhonemeArray;
-//   buf->lpIndexArray = bufs.lpIndexArray;
-//   buf->dwMaximumBufferLength = bufs.dwMaximumBufferLength;
-//   buf->dwMaximumNumberOfPhonemeChanges = bufs.dwMaximumNumberOfPhonemeChanges;
-//   buf->dwMaximumNumberOfIndexMarks = bufs.dwMaximumNumberOfIndexMarks;
-//   buf->dwBufferLength = bufs.dwBufferLength;
-//   buf->dwNumberOfPhonemeChanges = bufs.dwNumberOfPhonemeChanges;
-//   buf->dwNumberOfIndexMarks = bufs.dwNumberOfIndexMarks;
-//   buf->dwReserved = bufs.dwReserved;
+Napi::Object TTSBufferTag::FromStruct( Napi::Env env, TTS_BUFFER_T bufs ) {
+  Napi::Object from = TTSBufferTag::constructor.New( {} );
+  TTSBufferTag* buf = Napi::ObjectWrap< TTSBufferTag >::Unwrap( from );
+  buf->ttsBufferT = bufs;
 
-//   return from;
-// }
+  return from;
+}
 
 Napi::Value TTSBufferTag::GetLpData( const Napi::CallbackInfo& info ) {
   return Napi::Buffer< char >::New( info.Env(), ttsBufferT.lpData, ttsBufferT.dwBufferLength );

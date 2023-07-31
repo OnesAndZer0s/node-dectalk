@@ -12,9 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DecTalk = exports.DeviceID = exports.DeviceManagement = exports.Speaker = exports.WaveFormat = exports.MMSysError = exports.LogType = void 0;
+exports.TTSBuffer = exports.DecTalk = exports.DeviceID = exports.DeviceManagement = exports.Speaker = exports.WaveFormat = exports.MMSysError = exports.LogType = exports.Message = void 0;
 const bindings_1 = __importDefault(require("bindings"));
 const addon = (0, bindings_1.default)('node-dectalk.node');
+var Message;
+(function (Message) {
+    Message[Message["Buffer"] = 9] = "Buffer";
+    Message[Message["IndexMark"] = 1] = "IndexMark";
+    Message[Message["Status"] = 2] = "Status";
+    Message[Message["Visual"] = 3] = "Visual";
+})(Message = exports.Message || (exports.Message = {}));
 var LogType;
 (function (LogType) {
     /** Log text input. */
@@ -31,7 +38,7 @@ var LogType;
     LogType[LogType["OutPhones"] = 32] = "OutPhones";
     /** Log debug information in file dbglog.txt */
     LogType[LogType["DbgLog"] = 64] = "DbgLog";
-})(LogType || (exports.LogType = LogType = {}));
+})(LogType = exports.LogType || (exports.LogType = {}));
 var MMSysError;
 (function (MMSysError) {
     /** no error */
@@ -64,7 +71,7 @@ var MMSysError;
     MMSysError[MMSysError["InvalidAlias"] = 13] = "InvalidAlias";
     /** last error in range */
     MMSysError[MMSysError["LastError"] = 13] = "LastError";
-})(MMSysError || (exports.MMSysError = MMSysError = {}));
+})(MMSysError = exports.MMSysError || (exports.MMSysError = {}));
 ;
 /** defines for dwFormat field of WAVEINCAPS and WAVEOUTCAPS */
 var WaveFormat;
@@ -101,7 +108,7 @@ var WaveFormat;
     WaveFormat[WaveFormat["Format08M16"] = 8192] = "Format08M16";
     /** 8      kHz, Mono,   Mu-law */
     WaveFormat[WaveFormat["FormatMuLaw"] = 7] = "FormatMuLaw";
-})(WaveFormat || (exports.WaveFormat = WaveFormat = {}));
+})(WaveFormat = exports.WaveFormat || (exports.WaveFormat = {}));
 var Speaker;
 (function (Speaker) {
     Speaker[Speaker["Paul"] = 0] = "Paul";
@@ -113,21 +120,21 @@ var Speaker;
     Speaker[Speaker["Ursula"] = 6] = "Ursula";
     Speaker[Speaker["Rita"] = 7] = "Rita";
     Speaker[Speaker["Wendy"] = 8] = "Wendy";
-})(Speaker || (exports.Speaker = Speaker = {}));
+})(Speaker = exports.Speaker || (exports.Speaker = {}));
 var DeviceManagement;
 (function (DeviceManagement) {
     DeviceManagement[DeviceManagement["OwnAudioDevice"] = 1] = "OwnAudioDevice";
     DeviceManagement[DeviceManagement["ReportOpenError"] = 2] = "ReportOpenError";
     // UseSAPI5AudioDevice = 0x40000000,
     DeviceManagement[DeviceManagement["DoNotUseAudioDevice"] = 2147483648] = "DoNotUseAudioDevice";
-})(DeviceManagement || (exports.DeviceManagement = DeviceManagement = {}));
+})(DeviceManagement = exports.DeviceManagement || (exports.DeviceManagement = {}));
 var DeviceID;
 (function (DeviceID) {
     /** device ID for wave device mapper */
     DeviceID[DeviceID["Mapper"] = 4294967295] = "Mapper";
     /** Open device as shareable */
     DeviceID[DeviceID["OpenShareable"] = 4] = "OpenShareable";
-})(DeviceID || (exports.DeviceID = DeviceID = {}));
+})(DeviceID = exports.DeviceID || (exports.DeviceID = {}));
 ;
 class DecTalk extends addon.DecTalk {
     constructor() {
@@ -148,8 +155,8 @@ class DecTalk extends addon.DecTalk {
      *    `InvalParam` - Invalid param for th eload dictionary  <br/>
      * @memberof DecTalk
      */
-    startup(deviceID, deviceManagement = DeviceManagement.OwnAudioDevice) {
-        return super.startup(deviceID, deviceManagement);
+    startup(deviceID, deviceManagement = DeviceManagement.OwnAudioDevice, cb) {
+        return super.startup(deviceID, deviceManagement, cb);
     }
     /**
      * DECtalk shutdown function.
@@ -418,5 +425,52 @@ class DecTalk extends addon.DecTalk {
     unloadUserDictionary() {
         return super.unloadUserDictionary();
     }
+    /**
+     * Returns the current version of the Text-To-Speech system.
+     * @readonly
+     * @static
+     * @memberof DecTalk
+     */
+    static get version() {
+        return super.version;
+    }
+    /**
+     * Causes all speech samples created by the Text-To-Speech system to be places in user supplied shared memory buffers. These buffers are supplied to the system by the `addBuffer()` function.
+     * @param {WaveFormat} format - Determines the wave file audio sample format
+     * @return {MMSysError} The value will be zero if the function is successful.
+     * The return value will be one of the following constants:
+     *
+     * `NoError` = 0 - Normal successful completion <br/>
+     * `InvalParam` - An invalid parameter was passed (An illegal wave output format value.) <br/>
+     * `NoMem` - Unable to allocate memory <br/>
+     * `Error` - Illegal output state <br/>
+     * `InvalHandle` - The Text-To-Speech handle is invalid <br/>
+     * @memberof DecTalk
+     */
+    openInMemory(format) {
+        return super.openInMemory(format);
+    }
+    /**
+     * Return the Text-To-Speech system to it's normal state. Speech samples will be routed to the audio device (if audio output was enabled at startup).
+     * @return {MMSysError} The value will be zero if the function is successful.
+     * The return value will be one of the following constants:
+     *
+     * `NoError` = 0 - Normal successful completion <br/>
+     * `Error` - Output to memory not enabled, or unable to create a system object <br/>
+     * `InvalHandle` - The Text-To-Speech handle is invalid <br/>
+     * @memberof DecTalk
+     */
+    closeInMemory() {
+        return super.closeInMemory();
+    }
+    addBuffer(buf) {
+        return super.addBuffer(buf);
+    }
 }
 exports.DecTalk = DecTalk;
+class TTSBuffer extends addon.TTSBuffer {
+    constructor(options) {
+        super(options);
+    }
+}
+exports.TTSBuffer = TTSBuffer;

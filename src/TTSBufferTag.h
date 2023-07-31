@@ -10,7 +10,7 @@ class TTSBufferTag : public Napi::ObjectWrap< TTSBufferTag > {
     static Napi::FunctionReference constructor;
 
     TTS_BUFFER_T GetStruct();
-    // static Napi::Object FromStruct( Napi::Env env, TTS_BUFFER_T caps );
+    static Napi::Object FromStruct( Napi::Env env, TTS_BUFFER_T caps );
 
     Napi::Value GetLpData( const Napi::CallbackInfo& info );
     void SetLpData( const Napi::CallbackInfo& info, const Napi::Value& value );
