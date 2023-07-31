@@ -10,7 +10,6 @@ console.log( talk.startup( DeviceID.Mapper, DeviceManagement.DoNotUseAudioDevice
   switch ( msg ) {
     case Message.Buffer:
       console.log( "Buffer", other );
-      talk.addBuffer( other as TTSBuffer );
       break;
     case Message.Status:
       console.log( "Status" );

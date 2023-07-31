@@ -103,132 +103,88 @@ Napi::Value DecTalk::Startup( const Napi::CallbackInfo& info ) {
 
   VOID( CALLBACK * callback )
   ( LONG, LONG, DWORD, UINT ) = []( LONG lParam1, LONG lParam2, DWORD cbParam, UINT uiMsg ) {
-    auto shitballs = DecTalk::ttsList.at( cbParam );
+    auto ttsInstance = DecTalk::ttsList.at( cbParam );
 
-    Napi::Value other;
     LPTTS_BUFFER_T bufPtr;
+    bool shouldCall = false;
     switch( uiMsg ) {
       case TTS_MSG_STATUS:
-        fprintf( stderr, ": TTS_MSG_STATUS \n" );
+        fprintf( stderr, "TTS_MSG_STATUS \n" );
         break;
       case TTS_MSG_BUFFER:
         {
           bufPtr = (LPTTS_BUFFER_T) lParam2;
-
-          // Napi::FunctionReference ref = DecTalk::cbs.at( cbParam );
-          // new shit
-          // unsigned long hm = (unsigned long) cbParam;
-          // uintptr_t teehee = reinterpret_cast< uintptr_t >( hm );
-          // HELP* what = reinterpret_cast< HELP* >( teehee );
-
-          // Napi::FunctionReference shit = DecTalk::cbs [ 0 ];
-          // shit.Call( {} );
-          // shit.Value().Call( {} );
-          // fprintf( stderr, "ASSBLASTER\n" );
-          // other = TTSBufferTag::FromStruct( shitballs->Env(),bufPtr );
-          // TTSBufferTag* bufferTag = Napi::ObjectWrap< TTSBufferTag >::Unwrap( buffer );
-
-          // TextToSpeechAddBuffer( shitballs->ttsHandle, bufPtr );
+          TextToSpeechAddBuffer( ttsInstance->ttsHandle, bufPtr );
         }
         break;
-      // case TTS_MSG_INDEX_MARK:
-      //   fprintf( stderr, PROGRAM_NAME ": TTS_MSG_INDEX_MARK \n" );
-      //   break;
-      // case TTS_MSG_VISUAL:
-      //   fprintf( stderr, PROGRAM_NAME ": TTS_MSG_VISUAL \n" );
-      //   break;
+      case TTS_MSG_INDEX_MARK:
+        fprintf( stderr, "TTS_MSG_INDEX_MARK \n" );
+        break;
+      case TTS_MSG_VISUAL:
+        fprintf( stderr, "TTS_MSG_VISUAL \n" );
+        break;
       default:
-        fprintf( stderr, ": TTS_MSG_UNKNOWN \n" );
+        fprintf( stderr, "TTS_MSG_UNKNOWN \n" );
         break;
     }
 
-    TTS_BUFFER_T captureMe = *bufPtr;
-    auto callback = [ uiMsg, lParam2, captureMe ]( Napi::Env env, Napi::Function jsCallback ) {
-      Napi::Value s;
+    // if the buffer is not copied, the callback will just call the pointers to nothing :)
+    TTS_BUFFER_T copiedBuf;
+    memcpy( &copiedBuf, bufPtr, sizeof( TTS_BUFFER_T ) );
+
+    copiedBuf.lpData = (char*) malloc( copiedBuf.dwBufferLength );
+    memcpy( copiedBuf.lpData, bufPtr->lpData, copiedBuf.dwBufferLength );
+
+    copiedBuf.lpIndexArray = (LPTTS_INDEX_T) malloc( copiedBuf.dwMaximumNumberOfIndexMarks * sizeof( TTS_INDEX_T ) );
+    memcpy( copiedBuf.lpIndexArray, bufPtr->lpIndexArray, copiedBuf.dwMaximumNumberOfIndexMarks * sizeof( TTS_INDEX_T ) );
+
+    copiedBuf.lpPhonemeArray = (LPTTS_PHONEME_T) malloc( copiedBuf.dwMaximumNumberOfPhonemeChanges * sizeof( TTS_PHONEME_T ) );
+    memcpy( copiedBuf.lpPhonemeArray, bufPtr->lpPhonemeArray, copiedBuf.dwMaximumNumberOfPhonemeChanges * sizeof( TTS_PHONEME_T ) );
+
+    auto callback = [ uiMsg, copiedBuf ]( Napi::Env env, Napi::Function jsCallback ) {
+      Napi::Value retVal;
       switch( uiMsg ) {
         case TTS_MSG_STATUS:
           fprintf( stderr, ": TTS_MSG_STATUS \n" );
           break;
         case TTS_MSG_BUFFER:
           {
-            // LPTTS_BUFFER_T bufPtr = (LPTTS_BUFFER_T) lParam2;
+            retVal = TTSBufferTag::constructor.New( {} );
 
-            // Napi::FunctionReference ref = DecTalk::cbs.at( cbParam );
-            // new shit
-            // unsigned long hm = (unsigned long) cbParam;
-            // uintptr_t teehee = reinterpret_cast< uintptr_t >( hm );
-            // HELP* what = reinterpret_cast< HELP* >( teehee );
+            TTSBufferTag* ASD = Napi::ObjectWrap< TTSBufferTag >::Unwrap( retVal.ToObject() );
 
-            // Napi::FunctionReference shit = DecTalk::cbs [ 0 ];
-            // shit.Call( {} );
-            // shit.Value().Call( {} );
-            // fprintf( stderr, "ASSBLASTER\n" );
-            // other = TTSBufferTag::FromStruct( shitballs->Env(),bufPtr );
-            // TTSBufferTag* bufferTag = Napi::ObjectWrap< TTSBufferTag >::Unwrap( buffer );
-
-            // fprintf( stderr, PROGRAM_NAME ": Callback called \n" );
-
-            s = TTSBufferTag::constructor.New( {} );
-
-            TTSBufferTag* ASD = Napi::ObjectWrap< TTSBufferTag >::Unwrap( s.ToObject() );
-
-            ASD->ttsBufferT = captureMe;
-
-            fprintf( stderr, "L\n" );
+            ASD->ttsBufferT = copiedBuf;
           }
           break;
-        // case TTS_MSG_INDEX_MARK:
-        //   fprintf( stderr, PROGRAM_NAME ": TTS_MSG_INDEX_MARK \n" );
-        //   break;
-        // case TTS_MSG_VISUAL:
-        //   fprintf( stderr, PROGRAM_NAME ": TTS_MSG_VISUAL \n" );
-        //   break;
+        case TTS_MSG_INDEX_MARK:
+          fprintf( stderr, "TTS_MSG_INDEX_MARK \n" );
+          break;
+        case TTS_MSG_VISUAL:
+          fprintf( stderr, "TTS_MSG_VISUAL \n" );
+          break;
         default:
           fprintf( stderr, ": TTS_MSG_UNKNOWN \n" );
           break;
       }
 
-      jsCallback.Call( { Napi::Number::New( env, uiMsg ), s } );
+      jsCallback.Call( { Napi::Number::New( env, uiMsg ), retVal } );
     };
 
-    shitballs->ttsCb.BlockingCall( callback );
-    // shitballs->ttsCb.Release();
+    ttsInstance->ttsCb.BlockingCall( callback );
+    ttsInstance->ttsCb.Release();
   };
 
   DWORD id = -1;
 
-  if( info.Length() < 3 || !info [ 2 ].IsFunction() ) {
-  } else {
-    id = 0;
+  if( info.Length() >= 3 && info [ 2 ].IsFunction() ) {
+    id = 0; // TODO make this not hardcoded
     Napi::Function func = info [ 2 ].As< Napi::Function >();
 
     ttsCb = Napi::ThreadSafeFunction::New( info.Env(), func, "Callback", 0, 1 );
     DecTalk::ttsList.push_back( this );
   }
 
-  // get new instanceID
-
-  // dtcb = Napi::Persistent( info [ 2 ].As< Napi::Function >() );
-
-  // help.env = dtcb.Env();
-  // help.ref = dtcb;
-
-  // // size_t shit =
-
-  // HELP* ret = &help;
-
-  // dtcb.SuppressDestruct();
-
-  // Napi::FunctionReference* hmmmmm = reinterpret_cast< Napi::FunctionReference* >( teehee );
-
-  int retVal = TextToSpeechStartupEx( &ttsHandle, devNo, devOptions, callback, id );
-
-  if( retVal == MMSYSERR_NOERROR ) {
-    // set flag
-    // retVal = TextToSpeechSetFlag( ttsHandle, flag );
-  }
-
-  return Napi::Number::New( info.Env(), retVal );
+  return Napi::Number::New( info.Env(), TextToSpeechStartupEx( &ttsHandle, devNo, devOptions, callback, id ) );
 }
 
 Napi::Value DecTalk::SpeakSync( const Napi::CallbackInfo& info ) {

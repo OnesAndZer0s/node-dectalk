@@ -24,12 +24,5 @@ class TTSBufferTag : public Napi::ObjectWrap< TTSBufferTag > {
     void SetDwMaximumNumberOfPhonemeChanges( const Napi::CallbackInfo& info, const Napi::Value& value );
     Napi::Value GetDwMaximumNumberOfIndexMarks( const Napi::CallbackInfo& info );
     void SetDwMaximumNumberOfIndexMarks( const Napi::CallbackInfo& info, const Napi::Value& value );
-    Napi::Value GetDwBufferLength( const Napi::CallbackInfo& info );
-    void SetDwBufferLength( const Napi::CallbackInfo& info, const Napi::Value& value );
-    Napi::Value GetDwNumberOfPhonemeChanges( const Napi::CallbackInfo& info );
-    void SetDwNumberOfPhonemeChanges( const Napi::CallbackInfo& info, const Napi::Value& value );
-    Napi::Value GetDwNumberOfIndexMarks( const Napi::CallbackInfo& info );
-    void SetDwNumberOfIndexMarks( const Napi::CallbackInfo& info, const Napi::Value& value );
-
     TTS_BUFFER_T ttsBufferT;
 };
