@@ -32,9 +32,6 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
     Napi::Value Resume( const Napi::CallbackInfo& info );
     Napi::Value Reset( const Napi::CallbackInfo& info );
 
-    Napi::Value GetSampleRate( const Napi::CallbackInfo& info );
-    void SetSampleRate( const Napi::CallbackInfo& info, const Napi::Value& value );
-
     Napi::Value GetVolume( const Napi::CallbackInfo& info );
     void SetVolume( const Napi::CallbackInfo& info, const Napi::Value& value );
 
@@ -47,8 +44,8 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
     Napi::Value GetSpeaker( const Napi::CallbackInfo& info );
     void SetSpeaker( const Napi::CallbackInfo& info, const Napi::Value& value );
 
-    Napi::Value GetLanguage( const Napi::CallbackInfo& info );
-    void SetLanguage( const Napi::CallbackInfo& info, const Napi::Value& value );
+    // Napi::Value GetLanguage( const Napi::CallbackInfo& info );
+    // void SetLanguage( const Napi::CallbackInfo& info, const Napi::Value& value );
 
     Napi::Value GetInputCharacterCount( const Napi::CallbackInfo& info );
     Napi::Value GetIsSpeaking( const Napi::CallbackInfo& info );
@@ -72,4 +69,13 @@ class DecTalk : public Napi::ObjectWrap< DecTalk > {
     Napi::Value UnloadUserDictionary( const Napi::CallbackInfo& info );
 
     static Napi::Value GetVersion( const Napi::CallbackInfo& info );
+
+    void Typing( const Napi::CallbackInfo& info );
+
+    Napi::Value GetPhVdefParams( const Napi::CallbackInfo& info );
+
+    static Napi::Value StartLang( const Napi::CallbackInfo& info );
+    static Napi::Value SelectLang( const Napi::CallbackInfo& info );
+    static Napi::Value CloseLang( const Napi::CallbackInfo& info );
+    static Napi::Value EnumLang( const Napi::CallbackInfo& info );
 };

@@ -41,5 +41,5 @@ https://onesandzer0s.github.io/node-dectalk/
 ## TODO
 - [x] Add documentation.
 - [x] Add TypeScript support.
-- [ ] Figure out a way to add in the `TextToSpeechAddBuffer` and `callback` functions.
+- [x] Figure out a way to add in the `TextToSpeechAddBuffer` and `callback` functions.
     - seriously this is a pain in my **`aeiou`**. The function for the callback does not allow any sort of captures, so i cannot pass any pointer so that it can call a javascript function. I have no idea how to do this.
