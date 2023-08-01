@@ -1,7 +1,7 @@
 {
   "name": "node-dectalk",
-  "version": "0.1.0",
-  "description": "NodeJS bindings for the node-dectalk TTS Engine",
+  "version": "0.1.1",
+  "description": "Node.js bindings for the DecTalk Text-To-Speech Engine",
   "repository": {
     "type": "git",
     "url": "https://github.com/OnesAndZer0s/node-dectalk.git"
